@@ -1,0 +1,100 @@
+{extend name="public/base" /}
+{block name="style"}
+<style>
+    .layui-form-item .layui-input-inline {
+        width: auto;
+    }
+
+    .viewer img {
+        width: 60px;
+        height: 40px;
+        cursor: pointer;
+    }
+</style>
+{/block}
+{block name="body"}
+<section class="content">
+    <form method="get" action="{:url('advertlist');}">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" name="filter" value="{$filter}" id="filter" autocomplete="off" placeholder="请输入广告描述" class="layui-input">
+            </div>
+            <div class="layui-input-inline">
+                <button type="submit" class="layui-btn layui-btn-normal">查询</button>
+            </div>
+            {foreach name="Think.session.menulist" item="val"}
+            {if condition="strstr($val.url,($Request.controller.'/addAdvert'))"}
+            <div class="layui-input-inline" style="float:right;">
+                <a href="{:url('addAdvert')}" class="layui-btn layui-btn-normal">新增</a>
+            </div>
+            {/if}
+            {/foreach}
+        </div>
+    </form>
+    <table class="layui-table" lay-skin="line" id="list-table">
+        <thead>
+            <tr>
+                <th>图片</th>
+                <th>位置</th>
+                <th>链接地址</th>
+                <th>描述</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody class="viewer sortable">
+            {volist name='list' id='data'}
+            <tr class="">
+                <td><img src="{$data.image}" width="60" height="40" alt="广告图"></td>
+                <td>{$data.position}</td>
+                <td><a href="{$data.url}{if condition='!$data.url'}javascript:void(0);{/if}" target="_blank" >点击查看</a></td>
+                <td>{$data.desc}</td>
+                <td>{$data.create_time}</td>
+                <td>
+                    {foreach name="Think.session.menulist" item="val"}
+                    {if condition="strstr($val.url,($Request.controller.'/editAdvert'))"}
+                    <a href="{:url('editAdvert',['id'=>$data['id']])}" class="layui-btn layui-btn-xs layui-btn-normal">编辑 </a>
+                    {/if}
+                    {if condition="strstr($val.url,($Request.controller.'/delAdvert'))"}
+                    <a href="javascript:delAdvert({$data.id})" class="layui-btn layui-btn-xs layui-btn-danger">删除 </a>
+                    {/if}
+                    {/foreach}
+                </td>
+            </tr>
+            {/volist}
+        </tbody>
+    </table>
+    {$list|raw}
+</section>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        //删除广告
+        window.delAdvert = function (id) {
+            layer.confirm('您确定要删除吗?', { icon: 3, title: '温馨提示', skin: getBodyColor() }, function (index) {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "{:url('delAdvert')}?id=" + id,
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg(data.msg, {
+                                time: 2000
+                            }, function () {
+                                location.href = data.data.url;
+                            })
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    },
+                    error: function (data) {
+                        layer.msg("服务器开小差啦");
+                    }
+                });
+                layer.closeAll();
+            });
+        }
+    })
+</script>
+{/block}

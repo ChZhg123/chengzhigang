@@ -1,0 +1,78 @@
+{extend name="public/base" /}
+{block name="style"}
+<style>
+    .leave_info {
+        background: #fff;
+        border-radius: 2px;
+        width: 100%;
+        padding: 10px;
+    }
+
+    .leave_info .nickname {
+        width: 100%;
+        font-size: 15px;
+        position: relative;
+    }
+
+    .leave_info .nickname h2 {
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .leave_info .nickname span {
+        position: absolute;
+        right: 10px;
+        font-size: 12px;
+        color: #aaa;
+        top: 0px;
+    }
+
+    .leave_info .leave_content {
+        width: 100%;
+        margin-top: 10px;
+    }
+</style>
+{/block}
+{block name="body"}
+<section class="content">
+    <div class="layui-form">
+        <div class="leave_info">
+            <div class="nickname">
+                <h2>{$info.nickname}</h2>
+                <span>{$info.create_time}</span>
+            </div>
+            <div class="leave_content">
+                <div style="border:1px solid #e6e6e6;border-radius: 3px;padding: 5px;min-height: 100px;" class="layui-textarea">{if condition="$info.image"}<img src="{$info.image}" alt="">{/if}{$info.content|raw}</textarea>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <table class="layui-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center">用户(A->B)</th>
+                            <th style="text-align: center">内容</th>
+                            <th style="text-align: center">点赞数</th>
+                            <th style="text-align: center">回复时间</th>
+                        </tr>
+                    </thead>
+                    {foreach name="$list" item="val"}
+                    <tr>
+                        <td style="text-align: center">{$val.nickname}<br/>{$val.tonickname}</td>
+                        <td style="text-align: center">{$val.content|raw}</td>
+                        <td style="text-align: center">{$val.likes}</td>
+                        <td style="text-align: center">{$val.create_time}</td>
+                    </tr>
+                    {/foreach}
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form,
+            layer = layui.layer; //独立版的layer无需执行这一句
+    })
+</script>
+{/block}

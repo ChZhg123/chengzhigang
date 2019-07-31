@@ -1,0 +1,252 @@
+{extend name="public/base" /}
+{block name="style"}
+<style>
+    .blogs {
+    padding: 30px 0;
+    position: relative;
+    border-bottom: #BFAB86 1px solid;
+    overflow: hidden;
+}
+.blogs figure {
+    float: left;
+    width: 25%;
+    overflow: hidden;
+    cursor: pointer;
+}
+.blogs ul {
+    float: right;
+    line-height: 22px;
+    width: 72%;
+    color: #777;
+}
+.blogs h3 {
+    font-size: 16px;
+    font-weight: bold;
+    transition: all .5s;
+    margin-bottom: 10px;
+}
+.blogs h3 a {
+    color: #474645;
+}
+.autor {
+    overflow: hidden;
+    clear: both;
+    margin: 10px 0;
+    display: inline-block;
+    color: #999;
+    width: 100%;
+}
+.autor span {
+    margin: 0 10px 0 0;
+    padding-left: 20px;
+}
+.pingl.f_r {
+    padding: 0;
+}
+</style>
+{/block}
+{block name="body"}
+<!--lbox begin-->
+<div class="lbox">
+    <!--banbox begin-->
+    <div class="banbox">
+        <div class="layui-carousel banner" id="index-banner">
+            <div carousel-item="" class="fader">
+                {foreach name="banner" item="val"}
+                <div class="slide"><a href="{$val.url}" target="_blank"><img data-original="{$val.image}" src="{$val.image}" alt="{$val.name}"></a></div>
+                {/foreach}
+            </div>
+        </div>
+    </div>
+    <!--banbox end-->
+    <!--headline begin-->
+    <div class="headline">
+        <ul>
+            {foreach name="article" item="val"}
+            <li><a href="/index/article/index.html?id={$val.id}" title="{$val.title}"><img data-original="{$val.image}" src="{$val.image}" alt="{$val.title}"><span>{$val.title}</span></a></li>
+            {/foreach}
+        </ul>
+    </div>
+    <!--headline end-->
+    <div class="clearblank"></div>
+
+    <div class="tab_box whitebg">
+
+        <div class="tab_buttons">
+            <ul>
+                {foreach name="articlelist.cate" item="val"}
+                <li {if condition="$key eq 0"} class="newscurrent" {/if}>{$val.name}</li>
+                {/foreach}
+            </ul>
+        </div>
+        <div class="newstab">
+            {foreach name="articlelist.article" item="v"}
+            <div class="newsitem">
+                <div class="newspic">
+                    <ul>
+                        {volist name="v" id="vv" offset="0" length='2'}
+                        <li><a href="/index/article/index.html?id={$vv.id}"><img data-original="{$vv.image}" src="{$vv.image}"><span>{$vv.title}</span></a></li>
+                        {/volist}
+                    </ul>
+                </div>
+                <ul class="newslist">
+                    {volist name="v" id="vv" offset="2"}
+                    <li><i></i><a href="/index/article/index.html?id={$vv.id}" title="{$vv.title}">{$vv.title}</a>
+                    <p>{$vv.excerpt}</p></li>
+                    {/volist}
+                </ul>
+            </div>
+            {/foreach}
+        </div>
+    </div>
+
+    <!--tab_box end-->
+    <div class="zhuanti whitebg">
+        <h2 class="htitle"><span class="hnav"><a href="/index/article/articlelist.html?type=3" target="_blank">查看更多</a></span>特别推荐</h2>
+        <ul>
+            {foreach name="recomdlist" item="val"}
+                <li><a href="/index/article/index.html?id={$val.id}" target="_blank"><i class="ztpic"><img data-original="{$val.image}" src="{$val.image}"></i><b>{$val.title}</b><span class="excerpt">{$val.excerpt}</span><p><span><i class="fa fa-tag" style="color:#f9a8a8"></i>{$val.author}</span><span><i class="fa fa-time"></i>{$val.time}</span></p></a></li>
+            {/foreach}
+
+        </ul>
+    </div>
+    {if condition="$advertList.center"}
+    <div class="ad whitebg"><a href="{$advertList.center.url}" target="_blank"><img data-original="{$advertList.center.image}" src="{$advertList.center.image}"></a></div>
+    {/if}
+    <div class="whitebg bloglist">
+        <h2 class="htitle">最新博文</h2>
+        <ul>
+        </ul>
+        <div id="pageList" style="text-align: center"></div>
+    </div>
+    <!--bloglist end-->
+</div>
+<script>
+    layui.use(['layer', 'form', 'carousel', 'laypage'], function () {
+        var form = layui.form,
+            carousel = layui.carousel,
+            laypage = layui.laypage,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        var page = 1;
+        var count = '{$count}';
+        carousel.render({
+            elem: '#index-banner',
+            arrow: 'hover',
+            width: '100%',
+            height: '260px',
+        });
+        //首页文章列表
+        window.getArticleList = function (page,perpage) {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "{:url('article/getArticleList')}?type=1&page=" + page+"&perpage="+perpage,
+                success: function (data) {
+                    if (data.code == 0) {
+                        var html = '';
+                        //文章列表
+                        var list = data.data.data;
+
+                        for(var i=0;i<list.length;i++){
+                            html += '<li><span class="blogpic">';
+                            if(list[i].new==2||list[i].recomd==2){
+                                if(list[i].new==2){
+                                    type = 2;
+                                    name = '新';
+                                    className = 'new';
+                                }else{
+                                    type = 3;
+                                    name = '荐';
+                                    className = 'recomd';
+                                }
+                                html += '<p class="label '+className+'"><a href="/index/article/articleList.html?type=' + type + '" target="_blank">'+name+'<span></span></a></p>';
+                            }
+                            html += '<a href="/index/article/index.html?id=' + list[i].id + '" title="'+list[i].title+'"><img data-original="'+list[i].image+'" alt="'+list[i].title+'"></a></span>';
+                            html += '<div class="blogbox"><h3><a href="/index/article/index.html?id=' + list[i].id + '" target="_blank">'+list[i].title+'</a></h3><p class="blogtext">'+list[i].excerpt+'</p></div>';
+                            html += '<p class="bloginfo"><span class="span_l"><span><i class="fa fa-tag" style="color:#f9a8a8"></i>'+list[i].author+'</span><span><i class="fa fa-clock-o" style="color:#06a5de"></i>'+list[i].create_time+'</span></span><span class="span_r"><span><i class="fa fa-eye"></i>浏览（'+list[i].hits+'）</span><span><a href="index/article/index.html?id=' + list[i].id + '&focus=true" class="comment"><i class="fa fa-comment-o"></i>评论（'+list[i].comments+'）</a></span><span><a data-num="'+list[i].likes+'" data-id="'+list[i].id+'" data-type="1" href="javascript:void(0)" onclick="articleLike(this)" class="like"><i class="fa fa-thumbs-up"></i>赞（<span class="num">'+list[i].likes+'</span>）<em style="display:none"></em></a></span><span><a data-num="'+list[i].hates+'" data-id="'+list[i].id+'" data-type="2" href="javascript:void(0)" onclick="articleLike(this)" class="hate"><i class="fa fa-thumbs-down"></i>踩（<span class="num">'+list[i].hates+'</span>）<em style="display:none"></em></a></span></span></p></li>';
+                        }
+                        $('.bloglist').find('ul').html(html);
+                        $("img").lazyload({effect: "fadeIn",threshold :500});
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        }
+        getArticleList(1,10);//初始化加载
+        laypage.render({
+            elem: 'pageList',
+            count: count,
+            limit:10,
+            theme: '#1E9FFF',
+            jump: function (obj, first) {
+                //首次不执行
+                if (!first) {
+                    //do something
+                    getArticleList(obj.curr,obj.limit);
+                }
+            }
+        });
+        //点赞踩
+        window.articleLike = function(obj){
+            var type = $(obj).attr('data-type');
+            var id = $(obj).attr('data-id');
+            var html = "";
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "{:url('article/articleLike')}?id="+id+"&type="+type,
+                success: function (data) {
+                    if (data.code == 0) {
+                        var likes = data.data.likeNum;
+                        var hates = data.data.hateNum;
+                        if(type==1){
+                            var curLikeNum = $(obj).attr('data-num');
+                            var curHateNum = $(obj).parent().next().find('.hate').attr('data-num');
+                            if(parseInt(likes)>parseInt(curLikeNum)){
+                                html = '+1';
+                            }else if(parseInt(likes)<parseInt(curLikeNum)){
+                                html = '-1';
+                            }
+                            $(obj).find('em').html(html);
+                            $(obj).find('em').fadeIn(500);
+                            $(obj).find('em').fadeOut(500);
+                            setTimeout(function(){
+                                $(obj).attr('data-num',likes);
+                                $(obj).find('.num').html(likes);
+                                $(obj).parent().next().find('.hate').attr('data-num',hates);
+                                $(obj).parent().next().find('.hate').find('.num').html(hates);
+                            },500)
+                        }else{
+                            var curHateNum = $(obj).attr('data-num');
+                            var curLikeNum = $(obj).parent().prev().find('.like').attr('data-num');
+                            if(parseInt(hates)>parseInt(curHateNum)){
+                                html = '+1';
+                            }else if(parseInt(hates)<parseInt(curHateNum)){
+                                html = '-1';
+                            }
+                            $(obj).find('em').html(html);
+                            $(obj).find('em').fadeIn(500);
+                            $(obj).find('em').fadeOut(500);
+                            setTimeout(function(){
+                                $(obj).attr('data-num',hates);
+                                $(obj).find('.num').html(hates);
+                                $(obj).parent().prev().find('.like').attr('data-num',likes);
+                                $(obj).parent().prev().find('.like').find('.num').html(likes);
+                            },500)
+                        }
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        }
+    })
+</script>
+{/block}

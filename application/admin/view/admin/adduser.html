@@ -1,0 +1,117 @@
+{extend name="public/base" /}
+{block name="body"}
+<section class="content">
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">登录账号：</label>
+            <div class="layui-input-block">
+                <input type="text" name="username" id="username" autocomplete="off" placeholder="请输入英文、数字、下划线4-20位字符" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">登录密码：</label>
+            <div class="layui-input-block">
+                <input type="password" name="password" id="password" autocomplete="new-password" placeholder="请输入英文、数字、下划线6-20位字符" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名：</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" id="name" autocomplete="off" placeholder="请输入管理员姓名" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属角色：</label>
+            <div class="layui-input-inline">
+                <select name="role_id">
+                    {foreach name="rolelist" item="val"}
+                    <option value="{$val.id}">{$val.name}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">上传头像：</label>
+            <div class="layui-input-block">
+                <div class="blog-file-image viewer" style="display: none">
+                    <img src="" alt="">
+                    <p></p>
+                </div>
+                <div class="blog-btn-file">
+                    <input type="file" accept="image/*" class="blog-image" name="head_pic" />
+                    <div class="blog-btn-name">
+                        <p class="fa fa-folder-open-o"></p>
+                        <h1>上传头像</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="submit">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        var formData = new FormData();
+        //单图片上传
+        $(".blog-image").change(function () {
+            var file = this.files[0];
+            var path = uploadBack(file);
+            $(this).parent().prev('.blog-file-image').show();
+            $(this).parent().prev('.blog-file-image').find('img').attr("src", path);
+            $(this).parent().prev('.blog-file-image').find('p').html(file.name);
+            $('.blog-file-image').viewer();
+            formData.append("head_pic", file);
+        })
+        //提交数据
+        form.on('submit(submit)', function (data) {
+            //验证表单
+            if (!data.field.username) {
+                layer.tips('请输入登录账号', '#username', { tips: 3 });
+                return false;
+            }
+            if (!data.field.password) {
+                layer.tips('请输入登录密码', '#password', { tips: 3 });
+                return false;
+            }
+            if (!data.field.name) {
+                layer.tips('请输入姓名', '#name', { tips: 3 });
+                return false;
+            }
+            formData.append("username", data.field.username);
+            formData.append("password", data.field.password);
+            formData.append("name", data.field.name);
+            formData.append("role_id", data.field.role_id);
+            //ajax提交
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{:url('addUser')}",
+                data: formData,
+                processData:false,
+                contentType:false,
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {
+                            time: 2000
+                        }, function () {
+                            location.href = data.data.url;
+                        })
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        })
+    })
+</script>
+{/block}

@@ -1,0 +1,68 @@
+{extend name="public/base" /}
+{block name="style"}
+<style>
+    .layui-form-item .layui-input-inline {
+        width: auto;
+    }
+
+    .viewer img {
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+    }
+</style>
+{/block}
+{block name="body"}
+<section class="content">
+    <form method="get" action="{:url('auditlist');}">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" name="filter" value="{$filter}" id="filter" autocomplete="off" placeholder="请输入用户昵称" class="layui-input">
+            </div>
+            <div class="layui-input-inline">
+                <button type="submit" class="layui-btn layui-btn-normal">查询</button>
+            </div>
+        </div>
+    </form>
+    <table class="layui-table" lay-skin="line" id="list-table">
+        <thead>
+            <tr>
+                <th>头像</th>
+                <th>昵称</th>
+                <th>标题</th>
+                <th>类型</th>
+                <th>时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody class="viewer sortable">
+            {volist name='list' id='data'}
+            <tr class="">
+                <td>
+                    <img src="{if condition='$data.head_pic'}{$data.head_pic}{else/}/static/admin/custom/image/head.jpg{/if}" width="40" height="40" style="border-radius: 50%;" alt="{$data.nickname}">
+                </td>
+                <td>{$data.nickname}</td>
+                <td>{$data.title}</td>
+                <td>{if condition="$data.type eq 1"}分享{else/}讨论{/if}</td>
+                <td>{$data.create_time}</td>
+                <td>
+                    {foreach name="Think.session.menulist" item="val"}
+                    {if condition="strstr($val.url,($Request.controller.'/checkAudit'))"}
+                    <a href="{:url('checkAudit',['id'=>$data['id']])}" class="layui-btn layui-btn-xs layui-btn-normal">审核 </a>
+                    {/if}
+                    {/foreach}
+                </td>
+            </tr>
+            {/volist}
+        </tbody>
+    </table>
+    {$list|raw}
+</section>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form,
+            layer = layui.layer; //独立版的layer无需执行这一句
+            
+    })
+</script>
+{/block}

@@ -1,0 +1,51 @@
+<footer>
+    <div class="box">
+        <div class="wxbox">
+            <ul>
+                <li><img src="/static/index/public/images/wxgzh.jpg" alt="微信订阅号"><span>微信订阅号</span></li>
+                <li><img src="/static/index/public/images/wx.jpg" alt="我的微信"><span>我的微信</span></li>
+            </ul>
+        </div>
+        <div class="endnav">
+            <p><b>站点声明：</b></p>
+            <p>1、本站为个人博客，借鉴了杨青青博客模板完成。</p>
+            <p>2、所有文章均可转发，但要注明出自本博客。</p>
+            <p>Copyright © <a href="https://chengzhigang.cn" target="_blank">chengzhigang.cn</a> All Rights Reserved. 备案号：晋ICP备19007319号</p>
+            <p class="shareLink">
+                <a class="weibo" href="#" title="分享到微博" target="_blank" url="{$Request.domain}"><img data-original="/static/index/public/images/weibo.png" alt="微博logo"/></a>
+                <a class="qzone" href="#" title="分享到QQ空间" target="_blank" url="{$Request.domain}"><img data-original="/static/index/public/images/qzone.jpg" alt="QQ空间logo"/></a>
+                <a class="qq" href="#" title="分享到QQ好友" target="_blank" url="{$Request.domain}"><img data-original="/static/index/public/images/qq.png" alt="QQlogo"/></a>
+                <a class="douban" href="#" title="分享到豆瓣" target="_blank" url="{$Request.domain}"><img data-original="/static/index/public/images/douban.png" alt="豆瓣logo"/></a>
+                <a class="ren" href="#" title="分享到人人网" target="_blank" url="{$Request.domain}"><img data-original="/static/index/public/images/ren.png" alt="人人logo"/></a>
+                <a class="tie" href="#" title="分享到百度贴吧" target="_blank" url="{$Request.domain}"><img data-original="/static/index/public/images/tie.jpg" alt="百度贴吧logo"/></a>
+                <a class="you" href="#" title="分享到有道云笔记" target="_blank" url="{$Request.domain}"><img data-original="/static/index/public/images/you.jpg" alt="有道云笔记logo"/></a>
+            </p>
+        </div>
+    </div>
+    <a href="javascript:topPosition();">
+        <div class="top"></div>
+    </a>
+</footer>
+<script>
+    window.topPosition = function(){
+        var t_a = $("body").offset();
+        $("html,body").animate({ scrollTop: t_a.top - "90" + "px" }, 500);
+    }
+    /* 微博分享 */
+    function Share(){
+        var url = $('.weibo').attr('url');
+        var appkey = "581301662";
+        var title = "观海听潮 · 博客";
+        var desc = "观海听潮个人博客网站,一个走在PHP道路上的程序员";
+        var image = "{$Request.domain}/static/index/public/images/share.png";
+        var language = "zh_cn";
+        $('.weibo').attr('href',"https://service.weibo.com/share/share.php?url="+url+"&appkey="+appkey+"&title="+title+"&pic="+image+"&searchPic=true&language="+language+"");
+        $('.qzone').attr('href',"https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url="+url+"&title="+title+"&desc="+desc+"&pics="+image+"");
+        $('.qq').attr('href',"https://connect.qq.com/widget/shareqq/index.html?url="+url+"&title="+title+"&desc="+desc+"&pics="+image+"");
+        $('.douban').attr('href',"https://shuo.douban.com/!service/share?href="+url+"&name="+title+"&text="+desc+"&image="+image+"");
+        $('.ren').attr('href',"https://widget.renren.com/dialog/share?resourceUrl="+url+"&title="+title+"&description="+desc+"&pic="+image+"");
+        $('.tie').attr('href',"https://tieba.baidu.com/f/commit/share/openShareApi?url="+url+"&title="+title+"&sumary="+desc+"&pic="+image+"");
+        $('.you').attr('href',"https://note.youdao.com/memory/?url="+url+"&title="+title+"&desc="+desc+"&pic="+image+"");
+    }
+    Share();
+</script>

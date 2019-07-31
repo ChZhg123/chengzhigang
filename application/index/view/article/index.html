@@ -1,0 +1,521 @@
+{extend name="public/base" /}
+{block name="link"}
+<link rel="stylesheet" href="__INDEX__/public/css/comment.css">
+<link rel="stylesheet" href="__INDEX__/public/css/jquery.emoji.css" />
+<link href="https://cdn.bootcss.com/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+{/block}
+{block name="style"}
+<style>
+.shareUrl img{
+    width:20px;
+}
+</style>
+{/block}
+{block name="body"}
+<div class="lbox">
+    <div class="content_box whitebg">
+        <h2 class="htitle"><span class="con_nav">您现在的位置是：<a href="/">首页</a>
+                {foreach name="info.cate" item="v"}
+                &nbsp;&gt;&nbsp;<a href="{:url('articlelist',['type'=>4,'cate_id'=>$v.id])}">{$v.name}</a>
+                {/foreach}
+            </span><?php echo $info['cate'][count($info['cate'])-1]['name'];  ?></h2>
+
+        <div id="post-header" class="single-title">
+            <div class="single-avatar avatar_chunjie">
+                <img src="__ADMIN__/custom/image/avatar.png" alt="{$info.author}" class="author-avatar" title="本文作者：{$info.author}">
+            </div>
+            <h1><a href="{:url('article/index',['id'=>$info.id])}" title="{$info.title}" rel="bookmark">{$info.title}</a></h1>
+            <div class="single-info">
+                <span class="single-muted"><i class="fa fa-tag"></i><a href="{:url('articlelist',['type'=>5,'cate_id'=>$info.author])}">{$info.author}</a></span>
+                <span class="single-time"><i class="fa fa-clock-o"></i>{$info.create_time}</span>
+                <span class="single-views"><i class="fa fa-eye"></i>{$info.hits}</span>
+                <span class="single-comment"><i class="fa fa-comment"></i><a href="javascript:position()" title="点击评论">{$info.comments}条评论</a></span>
+                <div id="font-change" class="single-font">
+                    <span id="font-dec"><a href="javascript:void(0)" onclick="changeSize(1)" title="减小字体"><i class="fa fa-minus-square"></i></a></span>
+                    <span id="font-n"><a href="javascript:void(0)" title="默认大小">默认</a></span>
+                    <span id="font-inc"><a href="javascript:void(0)" onclick="changeSize(2)" title="增大字体"><i class="fa fa-plus-square"></i></a></span>
+                </div>
+            </div>
+        </div>
+        <fieldset class="layui-elem-field" style="border-style: dashed;">
+            <legend style="font-size:14px">摘要</legend>
+            <div class="layui-field-box">
+                {$info.excerpt}
+            </div>
+        </fieldset>
+        <div class="con_text">
+            <div id="content">{$info.content|raw}</div>
+            <div class="biaoqian">转载请注明：
+                <a href="{$Request.domain}">观海听潮博客</a>
+            <p>本文地址：<a href="{$Request.domain}{:url('article/index',['id'=>$info.id])}" target="_blank">{$Request.domain}{:url('article/index',['id'=>$info.id])}</a></p>
+        </div>
+        <div class="nextinfo">
+            {if condition="$info.prev"}
+            <p>上一篇：<a href="{$Request.domain}{:url('article/index',['id'=>$info.prev.id])}">{$info.prev.title}</a></p>
+            {/if}
+            {if condition="$info.next"}
+            <p>下一篇：<a href="{$Request.domain}{:url('article/index',['id'=>$info.next.id])}">{$info.next.title}</a></p>
+            {/if}
+        </div>
+        <div class="article-social">
+            <a href="javascript:void(0);" onclick="articleLike(this)" data-num="{$info.likes}" data-type="1" data-id="{$info.id}" id="Addlike" class="action actived like">
+                <i class="fa fa-thumbs-up"></i>
+                喜欢 (<span class="num">{$info.likes}</span>)
+                <em style="display:none"></em>
+            </a>
+            <span class="or">or</span>
+            <a href="javascript:void(0);" onclick="articleLike(this)" data-num="{$info.hates}" class="action action-hate hate" data-type="2" data-id="{$info.id}">
+                <i class="fa fa-thumbs-down"></i>
+                讨厌 (<span class="num">{$info.hates}</span>)
+                <em style="display:none"></em>
+            </a>
+        </div>
+        <div style="text-align: center" class="shareUrl">
+            <a class="weibo" href="#" title="分享到微博" target="_blank" url="{$Request.domain}{:url('article/index',['id'=>$info.id])}"><img src="/static/index/public/images/weibo.png" alt="微博logo"/></a>
+            <a class="qzone" href="#" title="分享到QQ空间" target="_blank" url="{$Request.domain}{:url('article/index',['id'=>$info.id])}"><img src="/static/index/public/images/qzone.jpg" alt="QQ空间logo"/></a>
+            <a class="qq" href="#" title="分享到QQ好友" target="_blank" url="{$Request.domain}{:url('article/index',['id'=>$info.id])}"><img src="/static/index/public/images/qq.png" alt="QQlogo"/></a>
+            <a class="douban" href="#" title="分享到豆瓣" target="_blank" url="{$Request.domain}{:url('article/index',['id'=>$info.id])}"><img src="/static/index/public/images/douban.png" alt="豆瓣logo"/></a>
+            <a class="ren" href="#" title="分享到人人网" target="_blank" url="{$Request.domain}{:url('article/index',['id'=>$info.id])}"><img src="/static/index/public/images/ren.png" alt="人人logo"/></a>
+            <a class="tie" href="#" title="分享到百度贴吧" target="_blank" url="{$Request.domain}{:url('article/index',['id'=>$info.id])}"><img src="/static/index/public/images/tie.jpg" alt="百度贴吧logo"/></a>
+            <a class="you" href="#" title="分享到有道云笔记" target="_blank" url="{$Request.domain}{:url('article/index',['id'=>$info.id])}"><img src="/static/index/public/images/you.jpg" alt="有道云笔记logo"/></a>
+        </div>
+    </div>
+    <div class="whitebg gbook" id="SOHUCS">
+        <h2 class="htitle">文章评论</h2>
+        <div class="commentBox">
+            <div class="commentInfo" data-pid="0">
+                <div class="comment">
+                    <div class="editor" placeholder="说点什么吧..." contenteditable="true"></div>
+                </div>
+                <div class="commentBtn">
+                    <div class="comment_l">
+                        <div class="emoji">
+                            <div class="emojiBtn"></div><img src="__INDEX__/public/images/emoji/1.gif" alt="表情"><span>表情</span>
+                        </div>
+                        <div class="image" onmouseover="showImg(this)" onmouseout="hideImg(this)">
+                            <div class="imageBox">
+                                <img src="" alt="">
+                                <a href="javascript:void(0)" onclick="delImg(this)" title="刪除">×</a>
+                            </div>
+                            <div class="uploadImg"><input type="file" accept="image/*" name="image"></div>
+                            <img src="__INDEX__/public/images/img.png" alt="图片"><span>图片</span>
+                        </div>
+                    </div>
+                    <button class="layui-btn layui-btn-normal" data-pid="0" data-article-id="{$info.id}" onclick="addComment(this);">发表评论</button>
+                </div>
+            </div>
+            <div class="comments">
+                <h3>评论列表</h3>
+                <ul class="commentlist">
+
+                </ul>
+            </div>
+            <div id="pageList" style="text-align: center"></div>
+        </div>
+    </div>
+</div>
+<script src="__INDEX__/public/js/jquery.emoji.min.js"></script>
+<script src="https://cdn.bootcss.com/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
+<script>
+    layui.use(['layer', 'form', 'laypage'], function () {
+        var form = layui.form,
+            laypage = layui.laypage,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        var commentImage = "";
+        var focus = '{$focus}';
+        var page = 1;
+        var count = '{$count}';
+        /* 微博分享 */
+        function weiboShare(){
+            var url = $('.weibo').attr('url');
+            var appkey = "581301662";
+            var title = "{$info.title}";
+            var desc = "{$info.excerpt}";
+            var image = "{$Request.domain}/static/index/public/images/share.png";
+            var language = "zh_cn";
+            $('.weibo').attr('href',"https://service.weibo.com/share/share.php?url="+url+"&appkey="+appkey+"&title="+title+"&pic="+image+"&searchPic=true&language="+language+"");
+            $('.qzone').attr('href',"https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url="+url+"&title="+title+"&desc="+desc+"&pics="+image+"");
+            $('.qq').attr('href',"https://connect.qq.com/widget/shareqq/index.html?url="+url+"&title="+title+"&desc="+desc+"&pics="+image+"");
+            $('.douban').attr('href',"https://shuo.douban.com/!service/share?href="+url+"&name="+title+"&text="+desc+"&image="+image+"");
+            $('.ren').attr('href',"https://widget.renren.com/dialog/share?resourceUrl="+url+"&title="+title+"&description="+desc+"&pic="+image+"");
+            $('.tie').attr('href',"https://tieba.baidu.com/f/commit/share/openShareApi?url="+url+"&title="+title+"&sumary="+desc+"&pic="+image+"");
+            $('.you').attr('href',"https://note.youdao.com/memory/?url="+url+"&title="+title+"&desc="+desc+"&pic="+image+"");
+        }
+        weiboShare();
+        //定位评论
+        window.position = function () {
+            var t_a = $("#SOHUCS").offset();
+            $("html,body").animate({ scrollTop: t_a.top - "90" + "px" }, 500);
+        }
+        if (focus) {
+            position();
+        }
+        //更改字体大小
+        window.changeSize = function (type) {
+            var thisEle = $("#content").css("font-size");
+            var textFontSize = parseFloat(thisEle, 10);
+            var unit = thisEle.slice(-2); //获取单位
+            if (type == 2) {
+                if (textFontSize <= 22) {
+                    textFontSize += 2;
+                }
+            } else {
+                if (textFontSize >= 12) {
+                    textFontSize -= 2;
+                }
+            }
+            $("#content").css("font-size", textFontSize + unit);
+        }
+        $('.emojiBtn').click(function(){
+            var obj = document.querySelector('.editor');
+            if(window.getSelection){
+                obj.focus(); //解决ff不获取焦点无法定位问题
+                var range = window.getSelection();//创建range
+                range.selectAllChildren(obj);//range 选择obj下所有子内容
+                range.collapseToEnd();//光标移至最后
+            }else if(document.selection){
+                var range = document.selection.createRange();//创建选择对象
+                //var range = document.body.createTextRange();
+                range.moveToElementText(obj);//range定位到obj
+                range.collapse(false);//光标移至最后
+                range.select();
+            }
+        })
+        //加载表情
+        $(".editor").emoji({
+            button: ".emojiBtn",
+            showTab: false,
+            animation: 'slide',
+            icons: [{
+                name: "emoji表情",
+                path: "/static/index/public/images/emoji/",
+                maxNum: 91,
+                excludeNums: [41, 45, 54],
+                file: ".gif"
+            }]
+        });
+        //单图片上传
+        $(".uploadImg").on('change', 'input', function () {
+            var file = this.files[0];
+            var path = uploadBack(file);
+            $(this).parents('.image').find('.imageBox').find('img').attr('src', path);
+            $(this).parents('.image').find('.imageBox').find('img').attr('alt', file.name);
+            $(this).parents('.image').find('span').css('color', '#1e9fff');
+            commentImage = file;
+        });
+        //显示图片
+        window.showImg = function (obj) {
+            var src = $(obj).find('.imageBox').find('img').attr('src');
+            if (src) {
+                $(obj).find('.imageBox').show();
+            }
+        }
+        //隐藏图片
+        window.hideImg = function (obj) {
+            $(obj).find('.imageBox').hide();
+        }
+        //删除图片
+        window.delImg = function (obj) {
+            $(obj).parent().find('img').attr('src', "");
+            $(obj).parent().parent().find('input').val("");
+            $(this).parents('.image').find('span').css('color', '#333');
+            commentImage = "";
+        }
+        //发表评论
+        window.addComment = function (obj) {
+            var formData = new FormData();
+            var user_id = '{$Think.session.user_id}';
+            var article_id = $(obj).attr('data-article-id');
+            var pid = $(obj).attr('data-pid');
+            if (!user_id) {
+                layer.msg('请先登录博客');
+                return false;
+            }
+            var content = $(obj).parents('.commentInfo').find('.editor').html();
+            if (!content) {
+                layer.msg('评论不能为空');
+                return false;
+            }
+            //图片
+            formData.append('content', content);
+            formData.append('article_id', article_id);
+            formData.append('pid', pid);
+            if (commentImage) {
+                formData.append('image', commentImage);
+            }
+            //ajax提交
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{:url('article/addComment')}",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {
+                            time: 2000
+                        }, function () {
+                            var list = [];
+                            var html = "";
+                            var commentInfo = data.data;
+                            list.push(commentInfo);
+                            if (pid > 0) {
+                                if($(obj).closest('.sonUl').length>0){
+                                    html = getHtml(list, html, 2,false);
+                                    $(obj).closest('li').after(html);
+                                }else{
+                                    if($(obj).closest('.box').next('.sonUl').length>0){
+                                        html = getHtml(list, html, 2,false);
+                                        $(obj).closest('.box').next('.sonUl').prepend(html);
+                                    }else{
+                                        html = getHtml(list, html, 2,true);
+                                        $(obj).closest('.box').after(html);
+                                    }
+                                }
+                                $(obj).closest('.commentInfo').remove();
+                            } else {
+                                html = getHtml(list, html, 1);
+                                $('.commentlist').prepend(html);
+                            }
+                        })
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        }
+        //评论列表
+        window.commentList = function (page, perpage) {
+            var article_id = "{$info.id}";
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "{:url('article/commentList')}?id=" + article_id + "&page=" + page + "&perpage=" + perpage,
+                success: function (data) {
+                    if (data.code == 0) {
+                        var list = data.data;
+                        var html = "";
+                        html = getHtml(list, html, 1,false);
+                        $('.commentlist').html(html);
+                        $("img").lazyload({effect: "fadeIn",threshold :200});
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        }
+        //获取评论页面
+        window.getHtml = function (list, html, level,state) {
+            if (state) {
+                html += '<ul class="sonUl">';
+            }
+            for (var i = 0; i < list.length; i++) {
+                html += '<li data-id="' + list[i].id + '"><div class="box"><div class="imgbox">';
+                if(list[i].head_pic){
+                    html += '<img data-original="'+list[i].head_pic+'" alt="' + list[i].nickname + '"/>';
+                }else{
+                    html += '<img data-original="/static/admin/custom/image/head.jpg" alt="' + list[i].nickname + '"/>';
+                }
+                html += '</div>';
+                if (level > 1) {
+                    html += '<div class="contentbox"><h3>' + list[i].nickname + '<span>回复</span>' + list[i].tonickname + '</h3><span class="time">' + list[i].create_time + '</span>';
+                } else {
+                    html += '<div class="contentbox"><h3>' + list[i].nickname + '</h3><span class="time">' + list[i].create_time + '</span>';
+                }
+                if (list[i].image) {
+                    html += '<div class="text">' + list[i].content + '<img class="image" data-original="' + list[i].image + '" /></div>';
+                } else {
+                    html += '<div class="text">' + list[i].content + '</div>';
+                }
+                html += '<div class="foot"><a href="javascript:void(0)" onclick="like(this)" data-num="' + list[i].likes + '" class="like" data-id="' + list[i].id + '"><i class="fa fa-thumbs-up"></i>(<span class="num">' + list[i].likes + '</span>)<em style="display:none"></em></a>';
+                if ('{$Think.session.user_id}' != list[i].user_id) {
+                    html += '<a class="reply" data-id="' + list[i].id + '" onclick="reply(this)" href="javascript:void(0)">回复</a>';
+                }
+                html += '</div>';
+                html += '</div></div>';
+                if(level==2){
+                    html += '</li>';
+                    if (list[i].child.length > 0) {
+                        html += getHtml(list[i].child, "", 2,false);
+                    }
+                }else{
+                    if (list[i].child.length > 0) {
+                        html += getHtml(list[i].child, "", 2,true);
+                    }
+                    html += '</li>';
+                }
+            }
+            if (state) {
+                html += '</ul>';
+            }
+            return html;
+
+        }
+        commentList(page, 10); //初始化加载
+        laypage.render({
+            elem: 'pageList',
+            count: count,
+            limit: 10,
+            theme: '#1E9FFF',
+            jump: function (obj, first) {
+                //首次不执行
+                if (!first) {
+                    //do something
+                    page = obj.curr;
+                    commentList(page, obj.limit);
+                }
+            }
+        });
+        //评论点赞
+        window.like = function (obj) {
+            var pid = $(obj).attr('data-id');
+            var id = '{$info.id}';
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "{:url('article/commentLike')}?pid=" + pid + "&id=" + id,
+                success: function (data) {
+                    if (data.code == 0) {
+                        var likes = data.data;
+                        var html = "";
+                        var curLikeNum = $(obj).attr('data-num');
+                        if (parseInt(likes) > parseInt(curLikeNum)) {
+                            html = '+1';
+                        } else if (parseInt(likes) < parseInt(curLikeNum)) {
+                            html = '-1';
+                        }
+                        $(obj).find('em').html(html);
+                        $(obj).find('em').fadeIn(500);
+                        $(obj).find('em').fadeOut(500);
+                        setTimeout(function () {
+                            $(obj).attr('data-num', likes);
+                            $(obj).find('.num').html(likes);
+                        }, 500);
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        }
+        //评论回复
+        window.reply = function (obj) {
+            var pid = $(obj).attr('data-id');
+            var leg = $(obj).parent().parent().find('.commentInfo').length;
+            if(leg>0){
+                return false;
+            }
+            var id = '{$info.id}';
+            var html = '';
+            html += '<div class="commentInfo" data-pid="' + pid + '"><div class="comment"><div class="editor editorbox" placeholder="说点什么吧..." contenteditable="true"></div></div>';
+            html += '<div class="commentBtn"><div class="comment_l"><div class="emoji"><div class="emojiBtn emojiBtnBox"></div><img src="__INDEX__/public/images/emoji/1.gif" alt="表情"><span>表情</span></div>';
+            html += '<div class="image" onmouseover="showImg(this)" onmouseout="hideImg(this)"><div class="imageBox"><img src="" alt=""><a href="javascript:void(0)" onclick="delImg(this)" title="刪除">×</a></div>';
+            html += '<div class="uploadImg"><input type="file" accept="image/*" name="image"></div><img src="__INDEX__/public/images/img.png" alt="图片"><span>图片</span></div>';
+            html += '</div><button class="layui-btn layui-btn-normal" data-pid="' + pid + '" data-article-id="' + id + '" onclick="addComment(this);">发表评论</button></div></div>';
+            $(obj).parent().after(html);
+            $('.emojiBtnBox').click(function(){
+                var obj = document.querySelector('.editorbox');
+                if(window.getSelection){
+                    obj.focus(); //解决ff不获取焦点无法定位问题
+                    var range = window.getSelection();//创建range
+                    range.selectAllChildren(obj);//range 选择obj下所有子内容
+                    range.collapseToEnd();//光标移至最后
+                }else if(document.selection){
+                    var range = document.selection.createRange();//创建选择对象
+                    //var range = document.body.createTextRange();
+                    range.moveToElementText(obj);//range定位到obj
+                    range.collapse(false);//光标移至最后
+                    range.select();
+                }
+            })
+            $(".editorbox").emoji({
+                button: ".emojiBtnBox",
+                showTab: false,
+                animation: 'slide',
+                icons: [{
+                    name: "emoji表情",
+                    path: "/static/index/public/images/emoji/",
+                    maxNum: 91,
+                    excludeNums: [41, 45, 54],
+                    file: ".gif"
+                }]
+            });
+            //单图片上传
+            $(".uploadImg input").change(function () {
+                var file = this.files[0];
+                var path = uploadBack(file);
+                $(this).parents('.image').find('.imageBox').find('img').attr('src', path);
+                $(this).parents('.image').find('.imageBox').find('img').attr('alt', file.name);
+                $(this).parents('.image').find('span').css('color', '#1e9fff');
+                commentImage = file;
+            })
+        }
+        //点赞踩
+        window.articleLike = function (obj) {
+            var type = $(obj).attr('data-type');
+            var id = $(obj).attr('data-id');
+            var html = "";
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "{:url('article/articleLike')}?id=" + id + "&type=" + type,
+                success: function (data) {
+                    if (data.code == 0) {
+                        var likes = data.data.likeNum;
+                        var hates = data.data.hateNum;
+                        if (type == 1) {
+                            var curLikeNum = $(obj).attr('data-num');
+                            var curHateNum = $(obj).parent().find('.hate').attr('data-num');
+                            if (parseInt(likes) > parseInt(curLikeNum)) {
+                                html = '+1';
+                            } else if (parseInt(likes) < parseInt(curLikeNum)) {
+                                html = '-1';
+                            }
+                            $(obj).find('em').html(html);
+                            $(obj).find('em').fadeIn(500);
+                            $(obj).find('em').fadeOut(500);
+                            setTimeout(function () {
+                                $(obj).attr('data-num', likes);
+                                $(obj).find('.num').html(likes);
+                                $(obj).parent().find('.hate').attr('data-num', hates);
+                                $(obj).parent().find('.hate').find('.num').html(hates);
+                            }, 500)
+                        } else {
+                            var curHateNum = $(obj).attr('data-num');
+                            var curLikeNum = $(obj).parent().find('.like').attr('data-num');
+                            if (parseInt(hates) > parseInt(curHateNum)) {
+                                html = '+1';
+                            } else if (parseInt(hates) < parseInt(curHateNum)) {
+                                html = '-1';
+                            }
+                            $(obj).find('em').html(html);
+                            $(obj).find('em').fadeIn(500);
+                            $(obj).find('em').fadeOut(500);
+                            setTimeout(function () {
+                                $(obj).attr('data-num', hates);
+                                $(obj).find('.num').html(hates);
+                                $(obj).parent().find('.like').attr('data-num', likes);
+                                $(obj).parent().find('.like').find('.num').html(likes);
+                            }, 500)
+                        }
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        }
+    })
+</script>
+{/block}

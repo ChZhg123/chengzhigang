@@ -1,0 +1,93 @@
+<header id="header">
+    <div class="navbox">
+        <h2 id="mnavh"><span class="navicon"></span></h2>
+        <div class="logo"><a href="">{:NickName}</a></div>
+        <nav>
+            <ul id="starlist">
+                {foreach name="nav" item="v"}
+                <li {if condition="count($v.child)>0" } class="menu" {/if}> 
+                    <a href="{$v.url}" title="{$v.name}" {if condition="(strpos(strtolower($v['url']),strtolower($Request.controller.'/'.$Request.action))!==false)" } id="selected" {/if}>{$v.name} </a> 
+                    {if condition="count($v.child)>0"}
+                    <ul class="sub">
+                        {foreach name="v.child" item="val" } 
+                        <li><a href="{$val.url}">{$val.name}</a></li>
+                        {/foreach}
+                    </ul>
+                    {/if}
+                </li>
+                {/foreach}
+            </ul>
+        </nav>
+        <ul class="nav_r">
+            {if condition="!$Think.session.user_id"}
+            <li style="line-height: 50px;">
+                <a class="r_sub" href="javascript:userLogin();">登录</a>
+                <a href="javascript:void(0);">/</a>
+                <a class="r_sub" href="javascript:userRegist();">注册</a>
+            </li>
+            {else/}
+            <li class="logined">
+                <a href="javascript:void(0);" title="{$Think.session.nickname}">
+                    {if condition="$Think.session.user_info.head_pic"}
+                    <img src="{$Think.session.user_info.head_pic}" alt="{$Think.session.nickname}">
+                    {else/}
+                    <img src="/static/admin/custom/image/head.jpg" alt="{$Think.session.nickname}">
+                    {/if}
+                </a>
+                <div class="child">
+                    <ul>
+                        <li><a href="/index/user/index.html" target="_blank">个人中心</a></li>
+                        <li class="loginout"><a href="#">退出登录</a></li>
+                    </ul>
+                </div>
+            </li>
+            {/if}
+            <li class="searchico"></li>
+        </ul>
+    </div>
+</header>
+<div class="searchbox">
+    <span></span>
+    <div class="search">
+        <form action="/index/article/articleList.html" method="get" name="searchform" id="searchform">
+            <input name="filter" id="keyboard" autocomplete="off" class="input_text" value="请输入关键字词" style="color: rgb(153, 153, 153);" onfocus="if(value=='请输入关键字词'){this.style.color='#000';value=''}" onblur="if(value==''){this.style.color='#999';value='请输入关键字词'}" type="text">
+            <input name="type" value="1" type="hidden">
+            <input class="input_submit" value="搜索" type="submit">
+        </form>
+    </div>
+    <div class="searchclose" title="关闭"></div>
+</div>
+<script>
+    layui.use('layer', function () {
+        var layer = layui.layer;
+        $('.logined').hover(function(){
+            $(this).find('.child').stop().slideDown(500);
+        },function(){
+            $(this).find('.child').stop().slideUp(500);
+        });
+        $('.logined .loginout').click(function () {
+            layer.confirm('您确定要退出登录吗?', { title: '温馨提示' }, function (index) {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "{:url('index/loginout')}",
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg(data.msg, {
+                                time: 2000
+                            }, function () {
+                                location.href = data.data.url;
+                            })
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    },
+                    error: function (data) {
+                        layer.msg("服务器开小差啦");
+                    }
+                });
+                layer.closeAll();
+            });
+        })
+    });
+</script>

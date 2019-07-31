@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>观海听潮 · 博客</title>
+    <meta name="keywords" content="观海听潮,博客,php,程志刚,程序员,IT,技术,网站">
+    <meta name="description" content="观海听潮个人博客网站,一个走在PHP道路上的程序员">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="__ADMIN__/plugins/layui/css/layui.css" />
+    <link rel="stylesheet" href="__INDEX__/public/css/index.css">
+    <link rel="stylesheet" href="__INDEX__/public/css/base.css">
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+    <script src="__INDEX__/public/js/base.js"></script>
+    <script src="__ADMIN__/plugins/layui/layui.js"></script>
+    <script src ="https://use.fontawesome.com/a3db5b8c51.js"></script>
+    <script src="https://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+    {block name="link"}{/block}
+</head>
+<style>
+    .layui-input:focus,
+    .layui-textarea:focus {
+        border-color: #00BFFF !important
+        
+    }
+    /* 自定义样式 */
+    .layui-form .blog-btn-file {
+        float: left;
+        background: #ffffff;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        width: 35px;
+        height: 35px;
+        position: relative;
+        border-radius: 2px;
+    }
+
+    .layui-form .blog-btn-file input:hover {
+        cursor: pointer;
+    }
+
+    .layui-form .blog-btn-file input[type=file] {
+        opacity: 0;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0px;
+        left: 0px;
+    }
+
+    .layui-form .blog-btn-file .blog-btn-name {
+        text-align: center;
+        background: #ecf0f5;
+        line-height: 35px;
+    }
+
+    .layui-form .blog-file-image {
+        float: left;
+        background: #ffffff;
+        width: 35px;
+        height: 35px;
+        margin-right: 10px;
+        border-radius: 2px;
+        position: relative;
+    }
+
+    .layui-form .blog-file-image img {
+        width: 100%;
+        height: 100%;
+    }
+</style>
+{block name="style"}{/block}
+<body>
+    {include file="public/header"}
+    <article>
+    {include file="public/side"}
+    {block name="body"}
+    {/block}
+    </article>
+    {include file="public/footer"}
+    <script>
+        jQuery(document).ready(function ($) {
+            $("img").lazyload({effect: "show"});
+        });
+        //获取body颜色
+        function getBodyColor() {
+            bodyColor = '';
+            var bodyclass = $('body').attr('class');
+            var bodyclassArr = bodyclass.split(' ');
+            for (var i = 0; i < bodyclassArr.length; i++) {
+                if (bodyclassArr[i].indexOf("skin") != -1) {
+                    bodyColor = bodyclassArr[i];
+                }
+            }
+            return bodyColor;
+        }
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            //上传图片回调
+            window.uploadBack = function (file) {
+                /*图片类型正则验证*/
+                if (!file) {
+                    layer.tips('请上传图片', '.blog-btn-file', { tips: 3 });
+                    return false;
+                }
+                var imgStr = /\.(jpg|jpeg|png|bmp|BMP|JPG|PNG|JPEG)$/;
+                if (!imgStr.test(file.name)) {
+                    layer.tips('请上传图片类型', '.blog-btn-file', { tips: 3 });
+                    return false;
+                }
+                var path = getObjectURL(file);
+                return path;
+            }
+            //获取图片url路径
+            window.getObjectURL = function (file) {
+                var url = null;
+                if (window.createObjectURL != undefined) {
+                    // basic
+                    url = window.createObjectURL(file);
+                } else if (window.URL != undefined) {
+                    // mozilla(firefox)
+                    url = window.URL.createObjectURL(file);
+                } else if (window.webkitURL != undefined) {
+                    // webkit or chrome
+                    url = window.webkitURL.createObjectURL(file);
+                }
+                return url;
+            }
+            //用户登录
+            window.userLogin = function(){
+                layer.open({
+                    type: 2,
+                    content: "{:url('index/login')}",
+                    area: ['350px', '470px'],
+                    title:false,
+                    shade: 0.8,
+                });
+            }
+            //用户注册
+            window.userRegist = function(){
+                layer.closeAll();
+                layer.open({
+                    type: 2,
+                    content: "{:url('index/regist')}",
+                    area: ['350px', '470px'],
+                    title:false,
+                    shade: 0.8,
+                });
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='__ADMIN__/plugins/jquery/dist/jquery.min.js' type='text/javascript'%3E%3C/script%3E"));
+        }
+    </script>
+    <script language=JavaScript>
+        
+    </script>
+</body>
+
+</html>

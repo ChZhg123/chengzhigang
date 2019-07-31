@@ -1,0 +1,100 @@
+{extend name="public/base" /}
+{block name="style"}
+<style>
+    .map {
+        width: 100%;
+        height: 900px;
+        background: #00456b;
+    }
+</style>
+{/block}
+
+{block name="body"}
+<section class="content">
+    <div class="row">
+        <section class="col-lg-12 connectedSortable">
+            <div id="map" class="map"></div>
+        </section>
+    </div>
+</section>
+<script src="__ADMIN__/plugins/echarts/echarts.min.js"></script>
+<script src="__ADMIN__/plugins/echarts/china.js"></script>
+<script>
+    var optionMap = {
+        title: {
+            left: 'center',
+            top: 'top',
+            text: '中国地图',
+            y: 'bottom',
+            textStyle: {
+                fontFamily: 'Arial',
+                fontSize: 20,
+                fontStyle: 'normal',
+                fontWeight: 'normal',
+                color: "#ffffff",
+                lineHeight: 100
+            },
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: function (params) {
+                var res = '<p>省/直辖市:' + params.name + '</p>';
+                res += '<p>' + '面积' + ':' + params.data.value + 'km²</p>';
+                res += '<p>' + '人口' + ':' + params.data.person + '</p>';
+                return res;
+            },
+        },
+
+        //左侧小导航图标
+        visualMap: {
+            show: false,
+            x: 'left',
+            y: 'center',
+            splitList: [
+            { start: 1000000, end: 2000000 },
+                { start: 600000, end: 1000000 },
+                { start: 400000, end: 600000 },
+                { start: 300000, end: 400000 },
+                { start: 250000, end: 300000 },
+                 { start: 210000, end: 250000 },
+                  { start: 200000, end: 210000 },
+                   { start: 180000, end: 200000 },
+                    { start: 160000, end: 180000 },
+                     { start: 140000, end: 160000 },
+                      { start: 120000, end: 140000 },
+                       { start: 100000, end: 120000 },
+                        { start: 50000, end: 100000 },
+                         { start: 35000, end: 50000 },
+                          { start: 13000, end: 35000 }, 
+                          { start: 11000, end: 13000 }, 
+                          { start: 10000, end: 11000 }, 
+                          { start: 5000, end: 10000 }, 
+                          { start: 0, end: 5000 }
+            ],
+            color: ['#5475f5','#008B8B', '#696969', '#FFD700','#9feaa5', '#85daef', '#74e2ca', '#e6ac53', '#9fb5ea', '#B3EE3A', '#6A5ACD', '#00BFFF', '#458B00', '#FF0000', '#FF6A6A', '#8B4500', '#8B0000', '#8C8C8C', '#EE30A7']
+        },
+
+        //配置属性
+        series: [{
+            name: '中国地图',
+            type: 'map',
+            mapType: 'china',
+            roam: false,
+            label: {
+                normal: {
+                    show: true //省份名称  
+                },
+                emphasis: {
+                    show: false
+                }
+            },
+            data: [{ "name": "广东", "value": 180000, "person": "11169万" }, { "name": "山东", "value": 153800, "person": "10005.83万" }, { "name": "河南", "value": 167000, "person": "9559.13万" }, { "name": "四川", "value": 481400, "person": "8302万" }, { "name": "江苏", "value": 102600, "person": "8029.3万" }, { "name": "河北", "value": 187700, "person": "7519.52万" }, { "name": "湖南", "value": 211800, "person": "6860.2万" }, { "name": "安徽", "value": 139700, "person": "6254.8万" }, { "name": "湖北", "value": 185900, "person": "5902万" }, { "name": "浙江", "value": 102000, "person": "5657万" }, { "name": "广西", "value": 236000, "person": "4885万" }, { "name": "云南", "value": 383300, "person": "4800.5万" }, { "name": "江西", "value": 167000, "person": "4622.1万" }, { "name": "辽宁", "value": 145900, "person": "4368.9万" }, { "name": "福建", "value": 121300, "person": "3911万" }, { "name": "陕西", "value": 205600, "person": "3835.44万" }, { "name": "黑龙江", "value": 454800, "person": "3788.7万" }, { "name": "山西", "value": 156300, "person": "3702.35万" }, { "name": "贵州", "value": 176000, "person": "3580万" }, { "name": "重庆", "value": 82300, "person": "3048.43万" }, { "name": "吉林", "value": 187400, "person": "2717.43万" }, { "name": "甘肃", "value": 454400, "person": "2625.71万" }, { "name": "内蒙古", "value": 1183000, "person": "2528.6万" }, { "name": "新疆", "value": 1660000, "person": "2444.67万" }, { "name": "上海", "value": 6300, "person": "2418.33万" }, { "name": "上海", "value": 6300, "person": "2418.33万" }, { "name": "台湾", "value": 36000, "person": "2369万" }, { "name": "北京", "value": 16800, "person": "2170.7万" }, { "name": "天津", "value": 11300, "person": "1556.87万" }, { "name": "海南", "value": 34000, "person": "925.76万" }, { "name": "香港", "value": 1101, "person": "743万" }, { "name": "宁夏", "value": 66400, "person": "681.79万" }, { "name": "青海", "value": 722300, "person": "598.38万" }, { "name": "西藏", "value": 1228000, "person": "337.15万" }, { "name": "澳门", "value": 25, "person": "63.2万" }]
+            //数据
+        }]
+    };
+    //初始化echarts实例
+    var myChart = echarts.init(document.getElementById('map'));
+    //使用制定的配置项和数据显示图表
+    myChart.setOption(optionMap);
+</script>
+{/block}

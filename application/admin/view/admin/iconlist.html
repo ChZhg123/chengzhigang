@@ -1,0 +1,60 @@
+{include file="public/basestyle" /}
+<style>
+    
+    .layui-form {
+        padding: 10px 0px 10px 10px;
+    }
+    .layui-form .layui-form-item .layui-input-inline {
+        width: 86px;
+        padding: 10px;
+        text-align: center;
+        font-size: 20px;
+    }
+    .layui-form .layui-form-item .layui-input-inline:hover {
+        cursor: pointer;
+        background: #00FFFF;
+        color:#ffffff;
+    }
+</style>
+
+<body>
+    <form method="get" action="{:url('iconlist');}">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" name="filter" value="{$filter}" id="filter" autocomplete="off" placeholder="请输入图标名称" class="layui-input">
+            </div>
+            <div class="layui-input-inline">
+                <button type="submit" class="layui-btn layui-btn-normal">查询</button>
+            </div>
+        </div>
+    </form>
+    <div class="layui-form">
+        <div class="layui-form-item">
+            {foreach name="list" item="val"}
+            <div class="layui-input-inline" onclick="selectIcon(this)">
+                <i class="fa {$val.name}" data-name="{$val.name}" data-id="{$val.id}" data-desc="{$val.desc}"></i>
+            </div>
+            {/foreach}
+        </div>
+    </div>
+
+    <script>
+        layui.use(['layer', 'form'], function () {
+            var form = layui.form,
+                layer = layui.layer; //独立版的layer无需执行这一句
+            window.selectIcon = function(obj){
+                parent.callback($(obj).find('i').attr('data-name'));
+                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                parent.layer.close(index); //再执行关闭
+            }
+            $('.layui-form .layui-form-item .layui-input-inline').hover(function(){
+                var descs = $(this).find('i').attr('data-desc');
+                if(descs){
+                    var descs = descs.replace(/,/g," ");
+                    layer.tips(descs, $(this), { tips: 3 });
+                }
+            })
+
+        })
+    </script>
+</body>

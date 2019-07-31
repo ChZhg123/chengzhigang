@@ -1,0 +1,271 @@
+{extend name="public/base" /}
+{block name="style"}
+<style>
+    #content {
+        border: none;
+        padding: 0px;
+        resize: none;
+    }
+    #catewrp {
+        display: none;
+        margin-top: -10px;
+    }
+
+    .layui-input-block .catebox {
+        display: inline-block;
+        border: 1px solid rgb(167, 113, 113);
+        height: 30px;
+        line-height: 30px;
+        color: #333;
+        padding: 0px 5px;
+        border-radius: 3px;
+        background: #fff;
+        cursor: pointer;
+        margin-bottom: 5px;
+        margin-right: 5px;
+    }
+</style>
+{/block}
+{block name="body"}
+<section class="content">
+    <div class="layui-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">文章类型：</label>
+                <div class="layui-input-inline">
+                    <select name="cate1" id="cate1" lay-filter="cate1">
+                        <option value="">请选择</option>
+                        {foreach name="category" item="val"}
+                        <option value="{$val.id}">{$val.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <select name="cate2" id="cate2" lay-filter="cate2">
+                        <option value="">请选择</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-input-block" id="catewrp">
+            </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">文章标题：</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" id="title" autocomplete="off" placeholder="请输入文章标题" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">作者：</label>
+            <div class="layui-input-block">
+                <input type="text" name="author" id="author" autocomplete="off" placeholder="请输入作者" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序：</label>
+            <div class="layui-input-block">
+                <input type="number" name="sort" id="sort" autocomplete="off" placeholder="请输入数字" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">摘要：</label>
+            <div class="layui-input-block">
+                <textarea class="layui-textarea" name="excerpt" id="excerpt" cols="30" rows="5"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">文章内容：</label>
+            <div class="layui-input-block">
+                <textarea id="content" class="layui-textarea" name="content" id="" cols="30" rows="5"></textarea>
+            </div>
+        </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">文章标签：</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="stick" value="1" lay-skin="primary"  title="置顶文章">
+                    <input type="checkbox" name="show" value="1" lay-skin="primary" checked title="公开文章">
+                    <input type="checkbox" name="new" value="1" lay-skin="primary" title="最新文章">
+                    <input type="checkbox" name="recomd" value="1" lay-skin="primary" title="推荐文章">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">上传图片：</label>
+                <div class="layui-input-block">
+                    <div class="blog-file-image viewer" style="display: none">
+                        <img src="" alt="">
+                        <p></p>
+                    </div>
+                    <div class="blog-btn-file">
+                        <input type="file" accept="image/*" class="blog-image" name="image" />
+                        <div class="blog-btn-name">
+                            <p class="fa fa-folder-open-o"></p>
+                            <h1>上传图片</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="submit">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="__ADMIN__/plugins/ueditor/ueditor.config.js"></script>
+<script src="__ADMIN__/plugins/ueditor/ueditor.all.js"></script>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        var image = "";
+        //新增分类盒子
+        window.addCatebox = function (id, name) {
+            $('#catewrp').show();
+            var replyCate = false;
+            for (var i = 0; i < $('.catebox').length; i++) {
+                if (id == $('.catebox').eq(i).attr('data-id')) {
+                    replyCate = true;
+                    return false;
+                }
+            }
+            if (!replyCate) {
+                $('#catewrp').append('<span class="catebox" data-id="' + id + '" onclick="delCate(this)">' + name + '</span>');
+            }
+        }
+        //一级联动
+        form.on('select(cate1)', function (data) {
+            if (data.value) {
+                var name = data.elem[data.elem.selectedIndex].text;
+                addCatebox(data.value, name);
+                getArticleCate(data.value, '#cate2');
+            }
+        })
+        //二级联动
+        form.on('select(cate2)', function (data) {
+            if (data.value) {
+                var name = data.elem[data.elem.selectedIndex].text;
+                addCatebox(data.value, name);
+            }
+        })
+        //选择分类联动
+        window.getArticleCate = function (pid, obj) {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "{:url('getArticleCate')}?pid=" + pid,
+                success: function (data) {
+                    var html = "<option value=''>请选择</option>";
+                    for (var i = 0; i < data.data.length; i++) {
+                        html += "<option value='" + data.data[i].id + "'>" + data.data[i].name + "</option>";
+                    }
+                    $(obj).html(html);
+                    form.render('select');
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        }
+        //删除文章分类
+        window.delCate = function (obj) {
+            layer.confirm('您确定要删除吗?', { icon: 3, title: '温馨提示', skin: getBodyColor() }, function (index) {
+                $(obj).remove();
+                var length = $('.catebox').length;
+                if (length == 0) {
+                    $('#catewrp').hide();
+                }
+                layer.closeAll();
+            });
+        }
+        var ueditor = UE.getEditor('content');
+        //单图片上传
+        $(".blog-image").change(function () {
+            var file = this.files[0];
+            var path = uploadBack(file);
+            $(this).parent().prev('.blog-file-image').show();
+            $(this).parent().prev('.blog-file-image').find('img').attr("src", path);
+            $(this).parent().prev('.blog-file-image').find('p').html(file.name);
+            $('.blog-file-image').viewer();
+            image = file;
+        })
+        //提交数据
+        form.on('submit(submit)', function (data) {
+            var formData = new FormData();
+            if(image){
+                formData.append("image", image);
+            }
+            //验证表单
+            if (!data.field.title) {
+                layer.msg('请输入文章标题');
+                return false;
+            }
+            if (!data.field.author) {
+                layer.msg('请输入作者');
+                return false;
+            }
+            if (!data.field.excerpt) {
+                layer.msg('请输入摘要');
+                return false;
+            }
+            if(!ueditor.getContent()){
+                layer.msg('请输入文章内容');
+                return false;
+            }
+            formData.append('title',data.field.title);
+            formData.append('author',data.field.author);
+            formData.append('excerpt',data.field.excerpt);
+            formData.append('content',ueditor.getContent());
+
+             //文章标签
+            if (data.field.new) {
+                formData.append('new', data.field.new);
+            }
+            if (data.field.recomd) {
+                formData.append('recomd', data.field.recomd);
+            }
+            if (data.field.stick) {
+                formData.append('stick', data.field.stick);
+            }
+            if (data.field.show) {
+                formData.append('show', data.field.show);
+            }
+            formData.append('sort',data.field.sort);
+            //验证表单
+            var cate = [];
+            //文章分类
+            $('#catewrp').find('.catebox').each(function () {
+                cate.push($(this).attr('data-id'));
+            })
+            if (cate.length == 0) {
+                layer.msg('请选择文章分类');
+                return false;
+            }
+            for(var i=0;i<cate.length;i++){
+                formData.append("category[]", cate[i]);
+            }
+            //ajax提交
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{:url('addArticle')}",
+                data: formData,
+                processData:false,
+                contentType:false,
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {
+                            time: 2000
+                        }, function () {
+                            location.href = data.data.url;
+                        })
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        })
+    })
+</script>
+{/block}

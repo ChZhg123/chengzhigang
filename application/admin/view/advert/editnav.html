@@ -1,0 +1,123 @@
+{extend name="public/base" /}
+{block name="body"}
+<section class="content">
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择上级导航：</label>
+            <div class="layui-input-inline">
+                <select name="pid" lay-filter="first">
+                    <option value="0">请选择</option>
+                    {foreach name="$category" item="val"}
+                    <option value="{$val.id}" {if condition="$val.id eq $info.pid"}selected{/if}>{$val.name}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">导航名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" value="{$info.name}" id="name" autocomplete="off" placeholder="请输入导航名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">导航链接：</label>
+            <div class="layui-input-block">
+                <input type="text" name="url" value="{$info.url}" id="url" autocomplete="off" placeholder="请输入导航链接" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">导航排序：</label>
+            <div class="layui-input-block">
+                <input type="number" name="sort" value="{$info.sort}" id="sort" autocomplete="off" placeholder="请输入导航序号" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">导航描述：</label>
+            <div class="layui-input-block">
+                <textarea class="layui-textarea" name="desc" id="" cols="30" rows="5">{$info.desc}</textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">导航图片：</label>
+            <div class="layui-input-block">
+                <div class="blog-file-image viewer" {if condition="!$info.image"} style="display: none"{/if}>
+                    <img src="{$info.image}" alt="">
+                    <p>已上传</p>
+                </div>
+                <div class="blog-btn-file">
+                    <input type="file" accept="image/*" class="blog-image" />
+                    <div class="blog-btn-name">
+                        <p class="fa fa-folder-open-o"></p>
+                        <h1>导航图片</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" value="{$info.id}" name="id">
+                <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="submit">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        var thumb = ""; //LOGO
+        //单图片上传
+        $(".blog-image").change(function () {
+            var file = this.files[0];
+            var path = uploadBack(file);
+            $(this).parent().prev('.blog-file-image').show();
+            $(this).parent().prev('.blog-file-image').find('img').attr("src", path);
+            $(this).parent().prev('.blog-file-image').find('p').html(file.name);
+            $('.blog-file-image').viewer();
+            thumb = file;
+        })
+        //提交数据
+        form.on('submit(submit)', function (data) {
+            var formData = new FormData();
+            //验证表单
+            if (!data.field.name) {
+                layer.tips('请输入导航名称', '#name', { tips: 3 });
+                return false;
+            }
+            formData.append("name", data.field.name);
+            if(thumb){
+                formData.append("image", thumb);
+            }
+            formData.append('sort', data.field.sort);
+            formData.append('url', data.field.url);
+            formData.append('pid', data.field.pid);
+            formData.append('desc', data.field.desc);
+            formData.append('id',data.field.id);
+            //ajax提交
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{:url('editNav')}",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {
+                            time: 2000
+                        }, function () {
+                            location.href = data.data.url;
+                        })
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        })
+    })
+</script>
+{/block}

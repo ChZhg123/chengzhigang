@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>观海听潮 · 博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" media="screen" href="__ADMIN__/custom/css/style.css">
+    <link rel="stylesheet" type="text/css" href="__ADMIN__/custom/css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="__ADMIN__/plugins/layui/css/layui.css" />
+</head>
+<style>
+    .remember{
+        margin-top:10px;
+    }
+    .remember .login-center-input{
+        margin-left: 2px;
+        color:#333333;
+        width: 100%;
+    }
+    .remember .login-center-input:hover{
+        cursor: pointer;
+    }
+    .remember input{
+        width:15px;
+        height: 15px;
+        vertical-align: middle;
+    }
+    .remember label{
+        font-size: 12px;
+    }
+    .remember .auto{
+        float: right;
+        margin-right: 5px;
+        cursor: pointer;
+    }
+</style>
+<body>
+    <div id="particles-js">
+        <div class="login">
+            <div class="login-top">
+                <div class="head-pic"><img src="__ADMIN__/custom/image/head-pic.jpg" alt=""></div>
+                <p>观海听潮博客</p>
+            </div>
+            <div class="login-center clearfix">
+                <div class="login-center-img"><img src="__ADMIN__/custom/image/name.png" /></div>
+                <div class="login-center-input">
+                    <input type="text" id="username" value="" placeholder="请输入您的用户名" onfocus="this.placeholder=''" onblur="this.placeholder='请输入您的用户名'" />
+                    <div class="login-center-input-text">用户名</div>
+                </div>
+            </div>
+            <div class="login-center clearfix">
+                <div class="login-center-img"><img src="__ADMIN__/custom/image/password.png" /></div>
+                <div class="login-center-input">
+                    <input type="password" id="password" value="" placeholder="请输入您的密码" autocomplete="new-password" onfocus="this.placeholder=''" onblur="this.placeholder='请输入您的密码'" />
+                    <div class="login-center-input-text">密码</div>
+                </div>
+            </div>
+            <div class="login-center clearfix" style="margin-bottom:0px;">
+                <div class="login-center-img"><img src="__ADMIN__/custom/image/captcha.png" /></div>
+                <div class="login-center-input login-captcha">
+                    <input type="text" id="captcha" name="captcha" autocomplete="off" placeholder="请输入验证码" onfocus="this.placeholder=''" onblur="this.placeholder='请输入您的密码'" />
+                    <div class="login-center-input-text">验证码</div>
+                </div>
+                <img src="{:captcha_src()}" style="width:100px;height:30px;cursor: pointer;" onclick="this.src='{:captcha_src()}?d='+Math.random();" id="captcha-img" title="点击刷新" alt="captcha" />
+            </div>
+            <div class="login-center remember">
+                <div class="login-center-input">
+                <label><input type="checkbox" id="remember" value="0">&nbsp;记住密码</label>
+                <label class="auto">忘记密码</label>
+                </div>
+            </div>
+            <div class="login-button">
+                登录
+            </div>
+        </div>
+        <div class="sk-rotating-plane"></div>
+    </div>
+
+    <!-- scripts -->
+    <script src="__ADMIN__/plugins/jquery/dist/jquery.min.js"></script>
+    <script src="__ADMIN__/plugins/jquery/dist/jquery.cookie.js"></script>
+    <script src="__ADMIN__/custom/js/particles.min.js"></script>
+    <script src="__ADMIN__/custom/js/app.js"></script>
+    <script src="__ADMIN__/plugins/layui/layui.js"></script>
+    <script type="text/javascript">
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            //记住密码
+            var cookie_name = $.cookie('username'); // 读取 cookie 
+            var cookie_psd = $.cookie('pass');
+            if(cookie_name&&cookie_psd){
+                $('#username').val(cookie_name);
+                $('#password').val(cookie_psd);
+                $('#remember').val(1);
+                $('#remember').prop('checked',true);
+            }
+            //记住密码点击事件
+            $('#remember').click(function(){
+                var checked = $(this).prop('checked');
+                if(checked){
+                    $(this).val(1);
+                }else{
+                    $(this).val(0);
+                }
+            })
+            //忘记密码点击事件
+            $('.auto').click(function(){
+                layer.alert('请联系管理员<br>手机号：15063337229',{'title':'温馨提示'});
+            })
+            //回车键点击事件
+            $(document).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    $(".login-button").click();
+                }
+            });
+            $('.login-button').click(function () {
+                var username = $('#username').val();
+                var password = $('#password').val();
+                var captcha = $('input[name="captcha"]').val();
+                if (!username) {
+                    layer.tips('请输入用户名', '#username', { tips: 1 });
+                    return false;
+                }
+                if (!password) {
+                    layer.tips('请输入密码', '#password', { tips: 1 });
+                    return false;
+                }
+                if (!captcha) {
+                    layer.tips('请输入验证码', '#captcha', { tips: 1 });
+                    return false;
+                }
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "{:url('index/login')}",
+                    async: false,
+                    data: {
+                        'username': username,
+                        'password': password,
+                        'captcha': captcha,
+                        'remember':$('#remember').val(),
+                    },
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg(data.msg, {
+                                time: 2000
+                            }, function () {
+                                layer.closeAll();
+                                $('.login').addClass('active');
+                                $('.sk-rotating-plane').addClass('active');
+                                $('.login').hide();
+                                setTimeout(function () {
+                                    location.href = data.data.url;
+                                }, 1000)
+                            })
+                        } else {
+                            layer.msg(data.msg, function () {
+                                $('#captcha-img').click();
+                                $('input[name=captcha]').val('');
+                            });
+                        }
+                    },
+                    error: function (data) {
+                        layer.msg("服务器开小差啦");
+                    }
+                });
+            })
+        });
+    </script>
+
+</body>
+
+</html>

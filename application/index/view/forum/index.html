@@ -1,0 +1,156 @@
+{extend name="public/base" /}
+{block name="link"}
+<link rel="stylesheet" href="__INDEX__/public/css/forum.css">
+{/block}
+{block name="style"}
+<style>
+    .leave_position{
+        position: relative;
+    }
+    .add{
+        position:absolute;
+        right: 10px;
+        top:0px;
+        color:seagreen;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="lbox">
+    <div class="whitebg gbook">
+        <h2 class="leave_position"><i class="fa fa-map-marker"></i>
+            &nbsp;您现在的位置是：<a href="/">首页</a>
+            &nbsp;&gt;&nbsp;<a href="{:url('forum/index')}">论坛</a>
+            <a class="add" href="{:url('forum/addforum')}">发表文章</a>
+        </h2>
+        <div class="layui-card">
+            <div class="layui-card-header">置顶</div>
+            <ul class="layui-card-body">
+                {foreach name="stick" item="val"}
+                <li>
+                    <a href="{:url('user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="avater" title="{$val.nickname}">
+                        <img {if condition="$val.head_pic"} data-original="{$val.head_pic}"  src="{$val.head_pic}"{else/} data-original="/static/admin/custom/image/head.jpg" src="/static/admin/custom/image/head.jpg"{/if} alt="{$val.nickname}">
+                    </a>
+                    <h2>
+                        <a href="javascript:void(0)" class="badge">{if condition="$val.type eq 1"}分享{else/}讨论{/if}</a>
+                        <a href="{:url('forum/forumInfo',['id'=>$val['id']])}">{$val.title}</a>
+                    </h2>
+                    <div class="list-info">
+                        <a href="{:url('user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="author"><i class="fa fa-tag"></i> {$val.nickname}</a>
+                        <span class="time">{$val.create_time}</span>
+                        <span class="list-nums"><a href="{:url('forum/forumInfo',['id'=>$val['id'],'focus'=>true])}"><i class="fa fa-commenting-o" title="评论"></i> {$val.comments}</a></span>
+                    </div>
+                    {if condition="$val.recomd eq 2"}
+                    <div class="list-badge">
+                        <span class="layui-badge layui-bg-red">推荐</span>
+                    </div>
+                    {/if}
+                </li>
+                {/foreach}
+            </ul>
+        </div>
+    </div>
+    <div class="whitebg" style="padding:10px 20px 20px 20px;">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <a href="{:url('forum/index',['type'=>1])}" {if condition="$type eq 1"} class="layui-this"{/if}>综合</a><span class="layui-mid"></span>
+                <a href="{:url('forum/index',['type'=>2])}" {if condition="$type eq 2"} class="layui-this"{/if}>分享</a><span class="layui-mid"></span>
+                <a href="{:url('forum/index',['type'=>3])}" {if condition="$type eq 3"} class="layui-this"{/if}>讨论</a><span class="layui-mid"></span>
+                <a href="{:url('forum/index',['type'=>4])}" {if condition="$type eq 4"} class="layui-this"{/if}>最新</a><span class="layui-mid"></span>
+                <a href="{:url('forum/index',['type'=>5])}" {if condition="$type eq 5"} class="layui-this"{/if}>推荐</a>
+            </div>
+            <ul class="layui-card-body forumlist">
+                {foreach name="list" item="val"}
+                <li>
+                    <a href="{:url('user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="avater" title="{$val.nickname}">
+                        <img  {if condition="$val.head_pic"}  data-original="{$val.head_pic" src="{$val.head_pic}"{else/} data-original="/static/admin/custom/image/head.jpg" src="/static/admin/custom/image/head.jpg"{/if} alt="{$val.nickname}">
+                    </a>
+                    <h2>
+                        <a href="javascript:void(0)" class="badge">{if condition="$val.type eq 1"}分享{else/}讨论{/if}</a>
+                        <a href="{:url('forum/forumInfo',['id'=>$val['id']])}">{$val.title}</a>
+                    </h2>
+                    <div class="list-info">
+                        <a href="{:url('user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="author"><i class="fa fa-tag"></i> {$val.nickname}</a>
+                        <span class="time">{$val.create_time}</span>
+                        <span class="list-nums"><a href="{:url('forum/forumInfo',['id'=>$val['id'],'focus'=>true])}"><i class="fa fa-commenting-o" title="评论"></i> {$val.comments}</a></span>
+                    </div>
+                    {if condition="$val.recomd eq 2"}
+                    <div class="list-badge">
+                        <span class="layui-badge layui-bg-red">推荐</span>
+                    </div>
+                    {/if}
+                </li>
+                {/foreach}
+            </ul>
+            <div id="pageList" style="text-align: center"></div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['layer', 'form', 'laypage'], function () {
+        var form = layui.form,
+            laypage = layui.laypage,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        var type = '{$type}';
+        var count = '{$count}';
+         //首页文章列表
+         window.getArticleList = function (page,perpage) {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "{:url('forum/getForumList')}?type="+type+"&page=" + page+"&perpage="+perpage,
+                success: function (data) {
+                    if (data.code == 0) {
+                        var html = '';
+                        var list = data.data;
+                        for(var i=0;i<list.length;i++){
+                            html += '<li>';
+                            html += '<a href="/index/user/userinfo?user_id='+list[i].user_id+'" target="_blank" class="avater" title="'+list[i].nickname+'">';
+                            if(list[i].head_pic){
+                                html += '<img data-original="'+list[i].head_pic+'" alt="'+list[i].nickname+'">';
+                            }else{
+                                html += '<img data-original="/static/admin/custom/image/head.jpg" alt="'+list[i].nickname+'">';
+                            }
+                            html += '</a>';
+                            html += '<h2><a href="javascript:void(0)" class="badge">';
+                            if(list[i].type==1){
+                                html += '分享';
+                            }else{
+                                html += '讨论';
+                            }
+                            html += '</a><a href="/index/forum/forumInfo?id='+list[i].id+'">'+list[i].title+'</a>';
+                            html += '<div class="list-info"><a href="/index/user/userinfo?user_id='+list[i].user_id+'" target="_blank" class="author"><i class="fa fa-tag"></i> '+list[i].nickname+'</a>';
+                            html += '<span class="time">'+list[i].create_time+'</span>';
+                            html += '<span class="list-nums"><a href="/index/forum/forumInfo?id='+list[i].id+'&focus=true"><i class="fa fa-commenting-o" title="评论"></i> '+list[i].comments+'</a></span></div>';
+                            if(list[i].recomd==2){
+                                html += '<div class="list-badge"><span class="layui-badge layui-bg-red">推荐</span></div>';
+                            }
+                            html += '</li>';
+                        }
+                        $('.forumlist').html(html);
+                        $("img").lazyload({effect: "fadeIn",threshold :200});
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        }
+        laypage.render({
+            elem: 'pageList',
+            count: count,
+            limit:15,
+            theme: '#1E9FFF',
+            jump: function (obj, first) {
+                //首次不执行
+                if (!first) {
+                    //do something
+                    getArticleList(obj.curr,obj.limit);
+                }
+            }
+        });
+    })
+</script>
+{/block}

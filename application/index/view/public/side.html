@@ -1,0 +1,74 @@
+<div class="rbox">
+    <div class="card">
+        <h2>我的名片</h2>
+        <p>网名：观海听潮</p>
+        <p>职业：PHP开发工程师</p>
+        <p>现居：山东省-青岛市</p>
+        <p>Email：1256699215@qq.com</p>
+        <ul class="linkmore">
+            <li><a href="/admin" target="_blank" class="fa fa-home" style="color: #ef5509;font-size: 40px;" title="网站后台"></a></li>
+            <li><a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&amp;email=1256699215@qq.com" target="_blank" style="color:#ff991a" class="fa fa-envelope" title="我的邮箱"></a></li>
+            <li><a target="_blank" href="https://wpa.qq.com/msgrd?v=3&uin=1256699215&site=qq&menu=yes" class="fa fa-qq" style="color:#1296db" title="QQ联系我"></a></li>
+            <li id="weixin"><a href="javascript:void(0)" target="_blank" class="fa fa-weixin" title="关注我的订阅号" style="color:#00c800"></a><i><img src="__INDEX__/public/images/wxgzh.jpg"></i></li>
+        </ul>
+    </div>
+    <div class="whitebg notice">
+        <h2 class="htitle">最新文章</h2>
+        <ul>
+            {foreach name="newlist" item="val"}
+            <li><a href="/index/article/index.html?id={$val.id}" title="{$val.title}" target="_blank">{$val.title}</a></li>
+            {/foreach}
+        </ul>
+    </div>
+    <div class="whitebg paihang">
+        <h2 class="htitle">点击排行</h2>
+        <ul>
+            {foreach name="clicklist" item="val"}
+            <li><i></i><a href="/index/article/index.html?id={$val.id}" title="{$val.title}" target="_blank">{$val.title}</a></li>
+            {/foreach}
+        </ul>
+    </div>
+    <div class="whitebg xihuan">
+        <h2 class="htitle">猜你喜欢</h2>
+        {if condition="$advertList.like"}
+        <section class="topnews imgscale"><a href="{$advertList.like.url}" target="_blank" title="{$advertList.like.desc}"><img alt="{$advertList.like.desc}" src="{$advertList.like.image}"><span>{$advertList.like.desc}</span></a></section>
+        {/if}
+        <ul>
+            {foreach name="likelist" item="val"}
+            <li><a href="/index/article/index.html?id={$val.id}" title="{$val.title}" target="_blank"><i><img alt="{$val.title}" data-original="{$val.image}"></i>
+                <p>{$val.title}</p></a>
+            </li>
+            {/foreach}
+        </ul>
+    </div>
+    <div class="whitebg tabel">
+        <h2 class="htitle">标签云</h2>
+        <ul>
+            {foreach name="tabellist" item="val"}
+            <span><a href="/index/article/articlelist.html?cate_id={$val.id}&type=4" target="_blank">{$val.name}</a></span>
+            {/foreach}
+        </ul>
+    </div>
+    <div class="links whitebg">
+        <h2 class="htitle">友情链接</h2>
+        <ul>
+            {foreach name="linklist" item="val"}
+            <li><a href="{$val.url}" target="_blank">{$val.name}</a></li>
+            {/foreach}
+        </ul>
+    </div>
+</div>
+<script>
+    layui.use('layer', function () {
+        var layer = layui.layer;
+        //随机获取颜色
+        window.getColor = function () {
+            var color = ['#03BBCF', '#FB4F4F', '#3280FC', '#38B03F', '#F1A325', '#808080', '#B6D82C', '#F69C9E'];
+            var n = Math.floor(Math.random() * color.length + 1)-1;
+            return color[n];
+        }
+        $('.tabel').find('ul span').each(function(){
+            $(this).css('background',getColor);
+        })
+    });
+</script>

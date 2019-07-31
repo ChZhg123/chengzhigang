@@ -1,0 +1,65 @@
+{extend name="public/base" /}
+{block name="style"}
+<style>
+    .audit_article{
+        background: #ffffff;
+        padding:10px;
+    }
+    .audit_article h3{
+        text-align: center;
+    }
+    .audit_content{
+        margin-top:10px;
+    }
+    .audit_content img{
+        max-width:100%;
+    }
+    .audit_btn{
+        margin-top:10px;
+        text-align: center;
+    }
+</style>
+{/block}
+{block name="body"}
+<section class="content">
+    <div class="audit_article">
+        <h3>{$info.title}</h3>
+        <div class="audit_content">{$info.content|raw}</div>
+        <div class="audit_btn">
+            <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="check('{$info.id}',2)">通过</button>
+            <button class="layui-btn layui-btn-danger layui-btn-sm" onclick="check('{$info.id}',3)">驳回</button>
+        </div>
+    </div>
+</section>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        window.check = function(id,status){
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{:url('checkAudit')}",
+                data:{
+                    'id':id,
+                    'check_status':status
+                },
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {
+                            time: 2000
+                        }, function () {
+                            location.href = data.data.url;
+                        })
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        }
+    })
+</script>
+{/block}

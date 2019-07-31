@@ -1,0 +1,179 @@
+{extend name="public/base" /}
+{block name="link"}
+<link rel="stylesheet" href="__INDEX__/public/css/forum.css">
+{/block}
+{block name="style"}
+<style>
+    .layui-form{
+        display:none;
+    }
+    .layui-card-header{
+        padding:0 15px;
+    }
+    .user_box{
+        padding:0px 10px;
+    }
+    .user_header{
+        font-size: 13px;
+        color:#aaa;
+    }
+    .user_header .time{
+        font-size: 12px;
+        margin-right: 5px;
+    }
+    .user_header .title{
+        color: #1296db;
+        font-size: 12px;
+        margin-right: 5px;
+        margin-left: 5px;
+    }
+    .user_content{
+        padding:0px 10px;
+        font-size: 12px;
+        color:#333;
+        border-bottom:1px solid #eee;
+    }
+    .user_content img{
+        display: inline;
+    }
+    .user_content .nickname{
+        color: #f9a8a8;
+        font-size: 12px;
+        margin-right: 5px;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="lbox">
+    <div class="header">
+        {if condition="$info.head_pic"}
+        <img src="{$info.head_pic}" alt="{$Think.session.nickname}">
+        {else/}
+        <img src="/static/admin/custom/image/head.jpg" alt="{$Think.session.nickname}">
+        {/if}
+        <h2>{$info.nickname}&nbsp;&nbsp;{if condition='$info.gender neq 3'}<i class="fa {if condition='$info.gender eq 1'} fa-mars{else/}fa-mars-stroke{/if}"></i>{else/}<span style="font-size: 12px;">未知</span>{/if}</h2>
+        <p class="attr">
+            <a title="评论数" href="javascript:void(0)"><span><i class="fa fa-comment-o"  style="color:#5fcec0"> ({$comments})</i></span></a>
+            <a title="加入时间" href="javascript:void(0)"><span><i class="fa fa-clock-o" style="color:#06a5de"></i> {$info.create_time}</span></a>
+            <a title="点赞数" href="javascript:void(0)"><span><i class="fa fa-thumbs-up" style="color:#f78585"> ({$likes})</i></span></a>
+        </p>
+        <div class="sign">
+            {if condition="$info.sign"}
+            {$info.sign}
+            {else/}
+            （这个人懒得留下签名）
+            {/if}
+        </div>
+    </div>
+    <div class="layui-row layui-col-space15" style="margin-top:10px;">
+            {if condition="count($article)>0"}
+        <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">博主文章评论</div>
+            <div class="layui-card-body" style="padding-bottom:10px;">
+                {foreach name="article" item="val"}
+                <div class="user_box">
+                    <div class="user_header">
+                        <span class="time">{$val.create_time}</span>在<a class="title" href="{:url('article/index',['id'=>$val['article_id']])}" target="_blank">{$val.title}</a>中评论：
+                    </div>
+                    <div class="user_content">
+                        {if condition="$val.pid gt 0"}@<a class="nickname" href="{:url('user/userinfo',['user_id'=>$val['piduser']])}" target="_blank">{$val.pidname}</a>{/if}
+                        <span>{$val.content|raw}</span>
+                    </div>
+                </div>
+                {/foreach}
+            </div>
+        </div>
+        </div>
+        {/if}
+        {if condition="count($forum)>0"}
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">论坛文章评论</div>
+                <div class="layui-card-body" style="padding-bottom:10px;">
+                    {foreach name="forum" item="val"}
+                    <div class="user_box">
+                        <div class="user_header">
+                            <span class="time">{$val.create_time}</span>在<a class="title" href="{:url('forum/forumInfo',['id'=>$val['forum_id']])}" target="_blank">{$val.title}</a>中评论：
+                        </div>
+                        <div class="user_content">
+                            {if condition="$val.pid gt 0"}@<a href="{:url('user/userinfo',['user_id'=>$val['piduser']])}" target="_blank">{$val.pidname}</a>{/if}
+                            <span>{$val.content|raw}</span>
+                        </div>
+                    </div>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+        {/if}
+        <div class="layui-col-md6">
+          <div class="layui-card">
+            <div class="layui-card-header">分享文章</div>
+            <ul class="layui-card-body">
+                {foreach name="share" item="val"}
+                <li>
+                    <a href="{:url('user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="avater" title="{$val.nickname}">
+                        <img  {if condition="$val.head_pic"} src="{$val.head_pic}"{else/} src="/static/admin/custom/image/head.jpg"{/if} alt="">
+                    </a>
+                    <h2>
+                        <a href="{:url('forum/forumInfo',['id'=>$val['id']])}" target="_blank">{$val.title}</a>
+                    </h2>
+                    <div class="list-info">
+                        <a href="{:url('user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="author"><i class="fa fa-tag"></i> {$val.nickname}</a>
+                        <span class="time">{$val.create_time}</span>
+                        <span class="list-nums"><a href="{:url('forum/forumInfo',['id'=>$val['id'],'focus'=>true])}" target="_blank"><i class="fa fa-commenting-o" title="评论"></i> {$val.comments}</a></span>
+                    </div>
+                    {if condition="$val.recomd eq 2"}
+                    <div class="list-badge">
+                        <span class="layui-badge layui-bg-red">推荐</span>
+                    </div>
+                    {/if}
+                </li>
+                {/foreach}
+                {if condition="count($share)==0"}
+                <div style="text-align: center;line-height: 75px;font-size: 13px;">暂时还没有发表分享型文章</div>
+                {/if}
+            </ul>
+          </div>
+        </div>
+        <div class="layui-col-md6">
+          <div class="layui-card">
+            <div class="layui-card-header">讨论文章</div>
+            <ul class="layui-card-body">
+                {foreach name="discuss" item="val"}
+                <li>
+                    <a href="{:url('user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="avater" title="{$val.nickname}">
+                        <img  {if condition="$val.head_pic"} src="{$val.head_pic}"{else/} src="/static/admin/custom/image/head.jpg"{/if} alt="">
+                    </a>
+                    <h2>
+                        <a href="{:url('forum/forumInfo',['id'=>$val['id']])}" target="_blank">{$val.title}</a>
+                    </h2>
+                    <div class="list-info">
+                        <a href="{:url('user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="author"><i class="fa fa-tag"></i> {$val.nickname}</a>
+                        <span class="time">{$val.create_time}</span>
+                        <span class="list-nums"><a href="{:url('forum/forumInfo',['id'=>$val['id'],'focus'=>true])}" target="_blank"><i class="fa fa-commenting-o" title="评论"></i> {$val.comments}</a></span>
+                    </div>
+                    {if condition="$val.recomd eq 2"}
+                    <div class="list-badge">
+                        <span class="layui-badge layui-bg-red">推荐</span>
+                    </div>
+                    {/if}
+                </li>
+                {/foreach}
+                {if condition="count($discuss)==0"}
+                <div style="text-align: center;line-height: 75px;font-size: 13px;">暂时还没有发表讨论型文章</div>
+                {/if}
+            </ul>
+          </div>
+        </div>
+      </div>
+</div>
+<script>
+    layui.use(['layer', 'form', 'laypage'], function () {
+        var form = layui.form,
+            laypage = layui.laypage,
+            layer = layui.layer; //独立版的layer无需执行这一句
+       
+    })
+</script>
+{/block}

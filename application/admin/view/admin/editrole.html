@@ -1,0 +1,115 @@
+{extend name="public/base" /}
+{block name="style"}
+<style>
+    #tree{
+		position: relative;
+    }
+    .layui-input-block .tree {
+        border: 1px solid #00BFFF;
+        padding: 0px 0px 10px 10px;
+        margin-top:10px;
+        margin-right:10px;
+        position: absolute;
+        min-width:120px;
+        margin-left:0px;
+    }
+</style>
+{/block}
+{block name="body"}
+<section class="content">
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" id="name" value="{$info.name}" autocomplete="off" placeholder="请输入角色名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色描述：</label>
+            <div class="layui-input-block">
+                <textarea class="layui-textarea" name="desc" id="" cols="30" rows="5">{$info.desc}</textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色权限：</label>
+            <div class="layui-input-block" id="tree">
+            {foreach name="treelist" item="val"}
+            <div class="layui-input-inline tree">
+                <input type="checkbox" lay-filter="tree" {if condition="$val.select eq 1"}checked{/if} data-level="{$val.level}" value="{$val.id}" name="navs[]" lay-skin="primary" title="{$val.name}">
+                {foreach name="val.child" item="v"}
+                <div style="padding-left:20px;">
+                    <input type="checkbox" lay-filter="tree" {if condition="$v.select eq 1"}checked{/if} data-level="{$v.level}" value="{$v.id}" name="navs[]" lay-skin="primary" title="{$v.name}">
+                    {foreach name="v.child" item="vv"}
+                    <div style="padding-left:20px;">
+                        <input type="checkbox" lay-filter="tree" {if condition="$vv.select eq 1"}checked{/if} data-level="{$vv.level}" value="{$vv.id}" name="navs[]" lay-skin="primary" title="{$vv.name}">
+                    </div>
+                    {/foreach}
+                </div>
+                {/foreach}
+            </div>
+            {/foreach}
+        </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" value="{$info.id}" name="id">
+                <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="submit">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="__ADMIN__/plugins/pinterest_grid/index.js"></script>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        //复选框点击事件
+        form.on('checkbox(tree)',function(data){
+            var level = $(data.elem).attr('data-level');
+            var sibings = $(data.elem).parent().parent().find('input[data-level="'+level+'"]:checked');
+            $(data.elem).parent().find('input[type="checkbox"]').prop('checked',data.elem.checked);
+            if(level==2&&(data.elem.checked||(!data.elem.checked&&sibings.length==0))){
+                $(data.elem).parent().parent().find('input[data-level="'+(level-1)+'"]').prop('checked',data.elem.checked);
+            }
+            form.render('checkbox');
+        })
+        $("#tree").pinterest_grid({
+            no_columns: 4,
+            padding_x: 10,
+            padding_y: 10,
+            margin_bottom: 10,
+            single_column_breakpoint: 700
+        });
+        //提交数据
+        form.on('submit(submit)', function (data) {
+            //验证表单
+            if (!data.field.name) {
+                layer.tips('请输入角色名称', '#name', { tips: 3 });
+                return false;
+            }
+            //ajax提交
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{:url('editRole')}",
+                data: data.field,
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {
+                            time: 2000
+                        }, function () {
+                            location.href = data.data.url;
+                        })
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        })
+    })
+</script>
+{/block}

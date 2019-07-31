@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>观海听潮 · 博客</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="__ADMIN__/plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="__ADMIN__/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="__ADMIN__/plugins/layui/css/layui.css" />
+    <script src="__ADMIN__/plugins/jquery/dist/jquery.min.js"></script>
+    <script src="__ADMIN__/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="__ADMIN__/plugins/layui/layui.js"></script>
+</head>
+<style>
+    .layui-form-label {
+        width: 120px;
+    }
+
+    .layui-input-block {
+        margin-left: 120px;
+    }
+    .layui-input:focus,
+    .layui-textarea:focus {
+        border-color: #00BFFF !important
+    }
+
+    form .layui-form-item {
+        padding: 10px;
+        background: #eeeeee;
+        margin-bottom: 0px;
+    }
+
+    .layui-form {
+        padding: 10px;
+    }
+</style>
+<script>
+        //判断登录超时
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            //表单重置
+            $('button[type="reset"]').click(function () {
+                $(':input', '.layui-form')
+                    .not(':button,:submit,:reset,:hidden')
+                    .val('')
+                    .removeAttr('checked')
+                    .removeAttr('selected');
+            });
+            //上传图片回调
+            window.uploadBack = function (file) {
+                /*图片类型正则验证*/
+                if (!file) {
+                    layer.msg('请上传图片');
+                    return false;
+                }
+                var imgStr = /\.(jpg|jpeg|png|bmp|BMP|JPG|PNG|JPEG)$/;
+                if (!imgStr.test(file.name)) {
+                    layer.msg('请上传图片类型');
+                    return false;
+                }
+                var path = getObjectURL(file);
+                return path;
+            }
+            //获取图片url路径
+            window.getObjectURL = function (file) {
+                var url = null;
+                if (window.createObjectURL != undefined) {
+                    // basic
+                    url = window.createObjectURL(file);
+                } else if (window.URL != undefined) {
+                    // mozilla(firefox)
+                    url = window.URL.createObjectURL(file);
+                } else if (window.webkitURL != undefined) {
+                    // webkit or chrome
+                    url = window.webkitURL.createObjectURL(file);
+                }
+                return url;
+            }
+        });
+    </script>

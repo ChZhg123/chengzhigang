@@ -1,0 +1,134 @@
+{extend name="public/base" /}
+{block name="style"}
+<style>
+    .leave_info {
+        background: #fff;
+        border-radius: 2px;
+        width: 100%;
+        padding: 10px;
+        position: relative;
+    }
+
+    .leave_info .head_pic{
+        width:40px;
+        height: 40px;
+        position:absolute;
+        left:10px;
+        top:10px;
+    }
+    .leave_info .leave_box{
+        padding-left: 45px;
+        width:100%;
+        position: relative;
+    }
+    .leave_info .leave_box h2{
+        font-size: 13px;
+        height: 20px;
+    line-height: 20px;
+    }
+    .leave_info .leave_box span{
+        display: inline-block;
+        font-size: 12px;
+        color: #aaa;
+    }
+    .leave_info .leave_content{
+        margin-top:5px;
+    }
+    .leave_info .leave_content .image{
+        width:50px;
+        display: inline;
+    }
+
+    .reply {
+        background: #fff;
+        border-radius: 2px;
+        width: 100%;
+        padding: 10px;
+        position: relative;
+        margin-top:10px;
+    }
+
+    .reply .head_pic{
+        width:40px;
+        height: 40px;
+        position:absolute;
+        right:10px;
+        top:10px;
+    }
+    .reply .leave_box{
+        padding-right: 45px;
+        width:100%;
+        position: relative;
+    }
+    .leave_box .reply_btn{
+        text-align: right;
+        margin-top:5px;
+    }
+    .reply .leave_content .image{
+        width:50px;
+        display: inline;
+    }
+</style>
+{/block}
+{block name="body"}
+<section class="content">
+    <div class="layui-form">
+        <div class="leave_info">
+            <img class="head_pic" src="{if condition='$info.head_pic'}{$info.head_pic}{else/}/static/admin/custom/image/head.jpg{/if}" alt="">
+            <div class="leave_box">
+                <h2>{$info.nickname}</h2><span>{$info.create_time}</span>
+                <div class="leave_content">
+                   {if condition="$info.image"}<img class="image" src="{$info.image}" alt="">{/if}{$info.content|raw}
+                </div>
+            </div>
+        </div>
+        <div class="reply">
+            <img class="head_pic" src="/static/admin/custom/image/head-pic.jpg" title="观海听潮" alt="">
+            <div class="leave_box">
+                <div class="leave_content">
+                    <textarea style="resize: none;" name="content" id="content" id="" cols="30" rows="3" class="layui-textarea"></textarea>
+                </div>
+                <div class="reply_btn">
+                    <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="reply('{$info.id}');">回复留言</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        window.reply = function(pid){
+            var content = $('#content').val();
+            if(!content){
+                layer.msg('回复内容不能为空');
+                return false;
+            }
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{:url('replyLeave')}",
+                data:{
+                    'pid':pid,
+                    'content':content
+                },
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {
+                            time: 2000
+                        }, function () {
+                            location.href = data.data.url;
+                        })
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        }
+    })
+</script>
+{/block}

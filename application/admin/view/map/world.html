@@ -1,0 +1,1213 @@
+{extend name="public/base" /}
+{block name="style"}
+<style>
+    .map {
+        width: 100%;
+        height: 900px;
+        background: #00456b;
+    }
+</style>
+{/block}
+
+{block name="body"}
+<section class="content">
+    <div class="row">
+        <section class="col-lg-12 connectedSortable">
+            <div id="map" class="map"></div>
+        </section>
+    </div>
+</section>
+<script src="__ADMIN__/plugins/echarts/echarts.min.js"></script>
+<script>
+    //地图展示
+    window.mapShow = function (mapData) {
+        $.get('__ADMIN__/plugins/echarts/world.json', function (mapJson) {
+            echarts.registerMap('world', mapJson);
+            myChart = echarts.init(document.getElementById('map'));
+            myChart.showLoading();
+            myChart.hideLoading();
+            option = {
+                title: {
+                    left: 'center',
+                    top: 'top',
+                    text: '世界地图',
+                    y: 'bottom',
+                    textStyle: {
+                        fontFamily: 'Arial',
+                        fontSize: 20,
+                        fontStyle: 'normal',
+                        fontWeight: 'normal',
+                        color: "#ffffff",
+                        lineHeight: 100
+                    },
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function (params) {
+                        var res = '<p>国家/地区:' + params.name + '</p>';
+                        res += '<p>' + '面积' + ':' + params.data.value + 'km²</p>';
+                        return res;
+                    },
+                },
+                visualMap: {
+                    min: 0,
+                    max: 10000000,
+                    show: false,
+                    color: ['#458B00', '#FF0000', '#FF6A6A', '#8B4500', '#8B0000', '#FFE1FF', '#8B8682', '#BFEFFF', '#008B8B', '#696969', '#FFD700', '#F0FFFF', '#FFA500', '#FF00FF', '#D8BFD8', '#FFE7BA', '#00CD00', '#B3EE3A', '#000080', '#6A5ACD', '#0000CD', '#00BFFF', '#3A5FCD', '#B0C4DE', '#4169E1', '#00F5FF', '#8B1A1A', '#8C8C8C', '#EE30A7']
+                },
+                series: [
+                {
+                    name: '世界地图',
+                    type: 'map',
+                    mapType: 'world',
+                    top: '20%',
+                    zoom: 1.1,
+                    roam: false,
+                    itemStyle: {
+
+                    },
+                    data: [
+                    {
+                        "name": "俄罗斯",
+                        "value": 17098200,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "南极",
+                        "value": 14245000,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "加拿大",
+                        "value": 9984670,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "中国",
+                        "value": 9634057,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "美国",
+                        "value": 9629091,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "巴西",
+                        "value": 8358140,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "澳大利亚",
+                        "value": 7682300,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "印度",
+                        "value": 2973190,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "阿根廷",
+                        "value": 2736690,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "哈萨克斯坦",
+                        "value": 2699700,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "阿尔及利亚",
+                        "value": 2381740,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "刚果（金）",
+                        "value": 2267050,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "沙特阿拉伯",
+                        "value": 2149690,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "墨西哥",
+                        "value": 1943950,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "印度尼西亚",
+                        "value": 1811570,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "苏丹",
+                        "value": 1765048,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "利比亚",
+                        "value": 1759540,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "伊朗",
+                        "value": 1628550,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "蒙古",
+                        "value": 1553560,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "秘鲁",
+                        "value": 1285216,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "尼日尔",
+                        "value": 1266700,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "乍得",
+                        "value": 1259200,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "安哥拉",
+                        "value": 1246700,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "马里",
+                        "value": 1220190,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "南非",
+                        "value": 1213090,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "哥伦比亚",
+                        "value": 1109500,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "埃塞俄比亚",
+                        "value": 1104300,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "玻利维亚",
+                        "value": 1098581,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "毛里塔尼亚",
+                        "value": 1030700,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "埃及",
+                        "value": 995450,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "尼日利亚",
+                        "value": 910770,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "坦桑尼亚",
+                        "value": 885800,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "委内瑞拉",
+                        "value": 882050,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "纳米比亚",
+                        "value": 823290,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "莫桑比克",
+                        "value": 786380,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "巴基斯坦",
+                        "value": 770880,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "土耳其",
+                        "value": 769630,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "智利",
+                        "value": 743532,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "赞比亚",
+                        "value": 743390,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "缅甸",
+                        "value": 653290,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "阿富汗",
+                        "value": 652860,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "索马里兰",
+                        "value": 137600
+                    },
+                    {
+                        "name": "索马里",
+                        "value": 627340,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "中非共和国",
+                        "value": 622980
+                    },
+                    {
+                        "name": "南苏丹",
+                        "value": 610952,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "马达加斯加",
+                        "value": 581795,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "乌克兰",
+                        "value": 579320,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "肯尼亚",
+                        "value": 569140,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "博茨瓦纳",
+                        "value": 566730
+                    },
+                    {
+                        "name": "法国",
+                        "value": 547557,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "也门",
+                        "value": 527970
+                    },
+                    {
+                        "name": "泰国",
+                        "value": 510890,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "西班牙",
+                        "value": 498800,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "喀麦隆",
+                        "value": 472710
+                    },
+                    {
+                        "name": "土库曼斯坦",
+                        "value": 469930
+                    },
+                    {
+                        "name": "巴布亚新几内亚",
+                        "value": 452860,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "摩洛哥",
+                        "value": 446300
+                    },
+                    {
+                        "name": "伊拉克",
+                        "value": 434320
+                    },
+                    {
+                        "name": "乌兹别克斯坦",
+                        "value": 425400
+                    },
+                    {
+                        "name": "格陵兰",
+                        "value": 410450,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "瑞典",
+                        "value": 410340,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "巴拉圭",
+                        "value": 397300
+                    },
+                    {
+                        "name": "津巴布韦",
+                        "value": 386850
+                    },
+                    {
+                        "name": "挪威",
+                        "value": 365268,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "日本",
+                        "value": 364555,
+                        "label": {
+                            show: true,
+                        }
+                    },
+                    {
+                        "name": "德国",
+                        "value": 348560,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "刚果（布）",
+                        "value": 341500
+                    },
+                    {
+                        "name": "马来西亚",
+                        "value": 328550,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "科特迪瓦",
+                        "value": 322463
+                    },
+                    {
+                        "name": "越南",
+                        "value": 310070,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "阿曼",
+                        "value": 309500
+                    },
+                    {
+                        "name": "波兰",
+                        "value": 306230,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "芬兰",
+                        "value": 303890,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "菲律宾",
+                        "value": 298170,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "意大利",
+                        "value": 294140,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "布基纳法索",
+                        "value": 273600
+                    },
+                    {
+                        "name": "加蓬",
+                        "value": 267700
+                    },
+                    {
+                        "name": "西撒哈拉",
+                        "value": 266000
+                    },
+                    {
+                        "name": "新西兰",
+                        "value": 263310,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "厄瓜多尔",
+                        "value": 248360
+                    },
+                    {
+                        "name": "几内亚",
+                        "value": 245720
+                    },
+                    {
+                        "name": "英国",
+                        "value": 241930,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "老挝",
+                        "value": 230800
+                    },
+                    {
+                        "name": "罗马尼亚",
+                        "value": 230170
+                    },
+                    {
+                        "name": "加纳",
+                        "value": 227540
+                    },
+                    {
+                        "name": "白俄罗斯",
+                        "value": 202910
+                    },
+                    {
+                        "name": "乌干达",
+                        "value": 199810
+                    },
+                    {
+                        "name": "圭亚那",
+                        "value": 196850
+                    },
+                    {
+                        "name": "塞内加尔",
+                        "value": 192530
+                    },
+                    {
+                        "name": "吉尔吉斯斯坦",
+                        "value": 191800
+                    },
+                    {
+                        "name": "叙利亚",
+                        "value": 183630
+                    },
+                    {
+                        "name": "柬埔寨",
+                        "value": 176520
+                    },
+                    {
+                        "name": "乌拉圭",
+                        "value": 175020
+                    },
+                    {
+                        "name": "苏里南",
+                        "value": 163821
+                    },
+                    {
+                        "name": "突尼斯",
+                        "value": 155360
+                    },
+                    {
+                        "name": "尼泊尔",
+                        "value": 143350
+                    },
+                    {
+                        "name": "塔吉克斯坦",
+                        "value": 139960
+                    },
+                    {
+                        "name": "希腊",
+                        "value": 131957
+                    },
+                    {
+                        "name": "孟加拉国",
+                        "value": 130170
+                    },
+                    {
+                        "name": "厄立特里亚",
+                        "value": 125000
+                    },
+                    {
+                        "name": "朝鲜",
+                        "value": 120410,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "尼加拉瓜",
+                        "value": 120340
+                    },
+                    {
+                        "name": "贝宁",
+                        "value": 112760
+                    },
+                    {
+                        "name": "洪都拉斯",
+                        "value": 111890
+                    },
+                    {
+                        "name": "保加利亚",
+                        "value": 108560
+                    },
+                    {
+                        "name": "危地马拉",
+                        "value": 107160
+                    },
+                    {
+                        "name": "古巴",
+                        "value": 106440,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "冰岛",
+                        "value": 100250,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "韩国",
+                        "value": 97230,
+                        "label": {
+                            "show": true,
+                        }
+                    },
+                    {
+                        "name": "利比里亚",
+                        "value": 96320
+                    },
+                    {
+                        "name": "马拉维",
+                        "value": 94280
+                    },
+                    {
+                        "name": "匈牙利",
+                        "value": 93030
+                    },
+                    {
+                        "name": "葡萄牙",
+                        "value": 91590
+                    },
+                    {
+                        "name": "约旦",
+                        "value": 88780
+                    },
+                    {
+                        "name": "塞尔维亚",
+                        "value": 87460
+                    },
+                    {
+                        "name": "法属圭亚那",
+                        "value": 86504
+                    },
+                    {
+                        "name": "阿拉伯联合酋长国",
+                        "value": 83600
+                    },
+                    {
+                        "name": "阿塞拜疆",
+                        "value": 82658
+                    },
+                    {
+                        "name": "奥地利",
+                        "value": 82409
+                    },
+                    {
+                        "name": "捷克共和国",
+                        "value": 77240
+                    },
+                    {
+                        "name": "巴拿马",
+                        "value": 74340
+                    },
+                    {
+                        "name": "塞拉利昂",
+                        "value": 72180
+                    },
+                    {
+                        "name": "格鲁吉亚",
+                        "value": 69490
+                    },
+                    {
+                        "name": "爱尔兰",
+                        "value": 68890
+                    },
+                    {
+                        "name": "拉脱维亚",
+                        "value": 64589
+                    },
+                    {
+                        "name": "斯里兰卡",
+                        "value": 62710
+                    },
+                    {
+                        "name": "立陶宛",
+                        "value": 62674
+                    },
+                    {
+                        "name": "克罗地亚",
+                        "value": 55960
+                    },
+                    {
+                        "name": "多哥",
+                        "value": 54390
+                    },
+                    {
+                        "name": "哥斯达黎加",
+                        "value": 51060
+                    },
+                    {
+                        "name": "波斯尼亚黑塞哥维那",
+                        "value": 51000
+                    },
+                    {
+                        "name": "多米尼加共和国",
+                        "value": 48320
+                    },
+                    {
+                        "name": "斯洛伐克",
+                        "value": 48088
+                    },
+                    {
+                        "name": "丹麦",
+                        "value": 42430
+                    },
+                    {
+                        "name": "爱沙尼亚",
+                        "value": 42390
+                    },
+                    {
+                        "name": "瑞士",
+                        "value": 39516
+                    },
+                    {
+                        "name": "不丹",
+                        "value": 38117
+                    },
+                    {
+                        "name": "台湾",
+                        "value": 36193,
+                        "label": {
+                            "show": true
+                        }
+                    },
+                    {
+                        "name": "几内亚-比绍",
+                        "value": 36125
+                    },
+                    {
+                        "name": "荷兰",
+                        "value": 33720
+                    },
+                    {
+                        "name": "摩尔多瓦",
+                        "value": 32850
+                    },
+                    {
+                        "name": "莱索托",
+                        "value": 30360
+                    },
+                    {
+                        "name": "比利时",
+                        "value": 30280
+                    },
+                    {
+                        "name": "亚美尼亚",
+                        "value": 28470
+                    },
+                    {
+                        "name": "赤道几内亚",
+                        "value": 28050
+                    },
+                    {
+                        "name": "所罗门群岛",
+                        "value": 27990
+                    },
+                    {
+                        "name": "海地",
+                        "value": 27560
+                    },
+                    {
+                        "name": "阿尔巴尼亚",
+                        "value": 27400
+                    },
+                    {
+                        "name": "布隆迪",
+                        "value": 25680
+                    },
+                    {
+                        "name": "马其顿",
+                        "value": 25220
+                    },
+                    {
+                        "name": "卢旺达",
+                        "value": 24670
+                    },
+                    {
+                        "name": "吉布提",
+                        "value": 23180
+                    },
+                    {
+                        "name": "伯利兹",
+                        "value": 22810
+                    },
+                    {
+                        "name": "以色列",
+                        "value": 21640
+                    },
+                    {
+                        "name": "萨尔瓦多",
+                        "value": 20720
+                    },
+                    {
+                        "name": "斯洛文尼亚",
+                        "value": 20140
+                    },
+                    {
+                        "name": "新喀里多尼亚",
+                        "value": 18280
+                    },
+                    {
+                        "name": "斐济",
+                        "value": 18270
+                    },
+                    {
+                        "name": "科威特",
+                        "value": 17820
+                    },
+                    {
+                        "name": "斯威士兰",
+                        "value": 17200
+                    },
+                    {
+                        "name": "东帝汶",
+                        "value": 14870
+                    },
+                    {
+                        "name": "巴哈马",
+                        "value": 13878
+                    },
+                    {
+                        "name": "黑山",
+                        "value": 13450
+                    },
+                    {
+                        "name": "瓦努阿图",
+                        "value": 12190
+                    },
+                    {
+                        "name": "福克兰群岛",
+                        "value": 12170
+                    },
+                    {
+                        "name": "卡塔尔",
+                        "value": 11610
+                    },
+                    {
+                        "name": "牙买加",
+                        "value": 10991
+                    },
+                    {
+                        "name": "冈比亚",
+                        "value": 10690
+                    },
+                    {
+                        "name": "黎巴嫩",
+                        "value": 10230
+                    },
+                    {
+                        "name": "塞浦路斯",
+                        "value": 9240
+                    },
+                    {
+                        "name": "波多黎各",
+                        "value": 8870
+                    },
+                    {
+                        "name": "新加坡",
+                        "value": 7191
+                    },
+                    {
+                        "name": "巴勒斯坦国",
+                        "value": 6020
+                    },
+                    {
+                        "name": "文莱",
+                        "value": 5765
+                    },
+                    {
+                        "name": "特里尼达和多巴哥",
+                        "value": 5128
+                    },
+                    {
+                        "name": "法属波利尼西亚",
+                        "value": 4167
+                    },
+                    {
+                        "name": "佛得角",
+                        "value": 4030
+                    },
+                    {
+                        "name": "萨摩亚",
+                        "value": 2830
+                    },
+                    {
+                        "name": "卢森堡",
+                        "value": 2586
+                    },
+                    {
+                        "name": "留尼汪",
+                        "value": 2500
+                    },
+                    {
+                        "name": "科摩罗",
+                        "value": 2235
+                    },
+                    {
+                        "name": "毛里求斯",
+                        "value": 2030
+                    },
+                    {
+                        "name": "瓜德罗普",
+                        "value": 1702
+                    },
+                    {
+                        "name": "马提尼克",
+                        "value": 1060
+                    },
+                    {
+                        "name": "圣多美普林西比",
+                        "value": 960
+                    },
+                    {
+                        "name": "特克斯和凯科斯",
+                        "value": 950
+                    },
+                    {
+                        "name": "基里巴斯",
+                        "value": 810
+                    },
+                    {
+                        "name": "巴林",
+                        "value": 750
+                    },
+                    {
+                        "name": "多米尼加",
+                        "value": 750
+                    },
+                    {
+                        "name": "汤加",
+                        "value": 720
+                    },
+                    {
+                        "name": "密克罗尼西亚",
+                        "value": 700
+                    },
+                    {
+                        "name": "圣卢西亚",
+                        "value": 610
+                    },
+                    {
+                        "name": "马恩岛",
+                        "value": 570
+                    },
+                    {
+                        "name": "关岛",
+                        "value": 540
+                    },
+                    {
+                        "name": "安道尔",
+                        "value": 470
+                    },
+                    {
+                        "name": "塞舌尔",
+                        "value": 460
+                    },
+                    {
+                        "name": "北马里亚纳群岛",
+                        "value": 460
+                    },
+                    {
+                        "name": "帕劳",
+                        "value": 460
+                    },
+                    {
+                        "name": "库拉索岛",
+                        "value": 444
+                    },
+                    {
+                        "name": "安提瓜岛和巴布达",
+                        "value": 440
+                    },
+                    {
+                        "name": "巴巴多斯",
+                        "value": 431
+                    },
+                    {
+                        "name": "费罗群岛",
+                        "value": 396
+                    },
+                    {
+                        "name": "圣文森特格林纳丁斯",
+                        "value": 390
+                    },
+                    {
+                        "name": "圣赫勒拿",
+                        "value": 390
+                    },
+                    {
+                        "name": "马约特岛",
+                        "value": 375
+                    },
+                    {
+                        "name": "美属维尔京群岛",
+                        "value": 350
+                    },
+                    {
+                        "name": "格林纳达",
+                        "value": 340
+                    },
+                    {
+                        "name": "加勒比荷兰",
+                        "value": 328
+                    },
+                    {
+                        "name": "马耳他",
+                        "value": 316
+                    },
+                    {
+                        "name": "圣基茨尼维斯",
+                        "value": 260
+                    },
+                    {
+                        "name": "纽埃",
+                        "value": 260
+                    },
+                    {
+                        "name": "开曼群岛",
+                        "value": 240
+                    },
+                    {
+                        "name": "库克群岛",
+                        "value": 240
+                    },
+                    {
+                        "name": "圣皮埃赫",
+                        "value": 230
+                    },
+                    {
+                        "name": "美属萨摩亚",
+                        "value": 200
+                    },
+                    {
+                        "name": "海峡群岛",
+                        "value": 190
+                    },
+                    {
+                        "name": "阿鲁巴",
+                        "value": 180
+                    },
+                    {
+                        "name": "马绍尔群岛",
+                        "value": 180
+                    },
+                    {
+                        "name": "列支敦士登",
+                        "value": 160
+                    },
+                    {
+                        "name": "英属维尔京群岛",
+                        "value": 150
+                    },
+                    {
+                        "name": "富图纳",
+                        "value": 140
+                    },
+                    {
+                        "name": "蒙特塞拉特",
+                        "value": 100
+                    },
+                    {
+                        "name": "安圭拉",
+                        "value": 90
+                    },
+                    {
+                        "name": "圣马力诺",
+                        "value": 60
+                    },
+                    {
+                        "name": "百慕大",
+                        "value": 50
+                    },
+                    {
+                        "name": "圣马丁岛",
+                        "value": 34
+                    },
+                    {
+                        "name": "图瓦卢",
+                        "value": 30
+                    },
+                    {
+                        "name": "瑙鲁",
+                        "value": 20
+                    },
+                    {
+                        "name": "直布罗陀",
+                        "value": 10
+                    },
+                    {
+                        "name": "托克劳",
+                        "value": 10
+                    },
+                    {
+                        "name": "马尔代夫",
+                        "value": 9
+                    },
+                    {
+                        "name": "摩纳哥",
+                        "value": 1
+                    },
+                    {
+                        "name": "梵蒂冈",
+                        "value": 0
+                    }]
+                }]
+            };
+            myChart.setOption(option);
+        })
+    }
+    window.mapShow();
+</script>
+{/block}

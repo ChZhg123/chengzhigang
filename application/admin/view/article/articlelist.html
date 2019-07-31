@@ -1,0 +1,216 @@
+{extend name="public/base" /}
+{block name="style"}
+<style>
+    .layui-form-item .layui-input-inline {
+        width: auto;
+    }
+
+    .viewer img {
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+    }
+</style>
+{/block}
+{block name="body"}
+<section class="content">
+    <form method="get" action="{:url('articlelist');}">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" name="filter" value="{$filter}" id="filter" autocomplete="off" placeholder="请输入文章标题" class="layui-input">
+            </div>
+            <div class="layui-input-inline">
+                <button type="submit" class="layui-btn layui-btn-normal">查询</button>
+            </div>
+            {foreach name="Think.session.menulist" item="val"}
+            {if condition="strstr($val.url,($Request.controller.'/addArticle'))"}
+            <div class="layui-input-inline" style="float:right;">
+                <a href="{:url('addArticle')}" class="layui-btn layui-btn-normal">新增</a>
+            </div>
+            {/if}
+            {/foreach}
+        </div>
+    </form>
+    <table class="layui-table" lay-skin="line" id="list-table">
+        <thead>
+            <tr>
+                <th>图片</th>
+                <th>标题</th>
+                <th>类型</th>
+                <th>作者</th>
+                <th style="text-align: center">是否置顶</th>
+                <th style="text-align: center">是否公开</th>
+                <th style="text-align: center">是否最新</th>
+                <th style="text-align: center">是否推荐</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody class="viewer sortable">
+            {volist name='list' id='data'}
+            <tr class="">
+                <td><img src="{$data.image}" alt="文章"></td>
+                <td>{$data.title}</td>
+                <td>{$data.id|getArticleCate}</td>
+                <td>{$data.author}</td>
+                <td style="text-align: center;">
+                    <button class="layui-btn layui-btn-primary layui-btn-xs" field_value="{$data.stick}" onclick="updateField('{$data.id}','stick',this)">
+                        {if condition="$data.stick eq 2"}
+                        <span style="color:#008800">是</span>
+                        {else/}
+                        <span style="color:#F7B824">否</span>
+                        {/if}
+                    </button>
+                </td>
+                <td style="text-align: center;">
+                    <button class="layui-btn layui-btn-primary layui-btn-xs" field_value="{$data.show}" onclick="updateField('{$data.id}','show',this)">
+                        {if condition="$data.show eq 2"}
+                        <span style="color:#008800">是</span>
+                        {else/}
+                        <span style="color:#F7B824">否</span>
+                        {/if}
+                    </button>
+                </td>
+                <td style="text-align: center;">
+                        <button class="layui-btn layui-btn-primary layui-btn-xs" field_value="{$data.new}" onclick="updateField('{$data.id}','new',this)">
+                            {if condition="$data.new eq 2"}
+                            <span style="color:#008800">是</span>
+                            {else/}
+                            <span style="color:#F7B824">否</span>
+                            {/if}
+                        </button>
+                    </td>
+                    <td style="text-align: center;">
+                            <button class="layui-btn layui-btn-primary layui-btn-xs" field_value="{$data.recomd}" onclick="updateField('{$data.id}','recomd',this)">
+                                {if condition="$data.recomd eq 2"}
+                                <span style="color:#008800">是</span>
+                                {else/}
+                                <span style="color:#F7B824">否</span>
+                                {/if}
+                            </button>
+                        </td>
+                <td>{$data.create_time}</td>
+                <td>
+                    {foreach name="Think.session.menulist" item="val"}
+                    {if condition="strstr($val.url,($Request.controller.'/editArticle'))"}
+                    <a href="{:url('editArticle',['id'=>$data['id']])}" class="layui-btn layui-btn-xs layui-btn-normal">编辑 </a>
+                    {/if}
+                    {if condition="strstr($val.url,($Request.controller.'/delArticle'))"}
+                    <a href="javascript:delArticle({$data.id})" class="layui-btn layui-btn-xs layui-btn-danger">删除 </a>
+                    {/if}
+                    {/foreach}
+                </td>
+            </tr>
+            {/volist}
+        </tbody>
+    </table>
+    {$list|raw}
+</section>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        // 修改指定表的指定字段值
+        window.updateField = function (id_value, field, obj) {
+            var str = "";
+            var msg = '';
+            var field_value = obj.getAttribute('field_value');
+            switch (field) {
+            case 'stick':
+                msg = '是否修改置顶状态';
+                if (field_value == 1) {
+                    str = '<span style="color:#008800">是</span>';
+                    var value = 2;
+                } else {
+                    str = '<span style="color:#F7B824">否</span>';
+                    var value = 1;
+                }
+                break;
+            case 'show':
+                msg = '是否修改公开状态';
+                if (field_value == 1) {
+                    str = '<span style="color:#008800">是</span>';
+                    var value = 2;
+                } else {
+                    str = '<span style="color:#F7B824">否</span>';
+                    var value = 1;
+                }
+                break;
+            case 'new':
+                msg = '是否修改最新状态';
+                if (field_value == 1) {
+                    str = '<span style="color:#008800">是</span>';
+                    var value = 2;
+                } else {
+                    str = '<span style="color:#F7B824">否</span>';
+                    var value = 1;
+                }
+                break;
+            case 'recomd':
+                msg = '是否修改推荐状态';
+                if (field_value == 1) {
+                    str = '<span style="color:#008800">是</span>';
+                    var value = 2;
+                } else {
+                    str = '<span style="color:#F7B824">否</span>';
+                    var value = 1;
+                }
+                break;
+            }
+            layer.confirm(msg, function (index) {
+                $.ajax({
+                    url: "{:url('changeArticle')}",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        'id': id_value,
+                        'field': field,
+                        'value': value
+                    },
+                    success:function (data) {
+                        if (data.code == 0) {
+                            layer.msg(data.msg, {
+                                time: 2000
+                            }, function () {
+                                obj.setAttribute('field_value', value);
+                                obj.innerHTML = str;
+                            })
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    },
+                    error:function (data) {
+                        layer.msg("服务器开小差啦");
+                    }
+                });
+                layer.closeAll();
+            });
+        }
+        //删除文章
+        window.delArticle = function (id) {
+            layer.confirm('您确定要删除吗?', { icon: 3, title: '温馨提示', skin: getBodyColor() }, function (index) {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "{:url('delArticle')}?id=" + id,
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg(data.msg, {
+                                time: 2000
+                            }, function () {
+                                location.href = data.data.url;
+                            })
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    },
+                    error: function (data) {
+                        layer.msg("服务器开小差啦");
+                    }
+                });
+                layer.closeAll();
+            });
+        }
+    })
+</script>
+{/block}

@@ -1,0 +1,122 @@
+{extend name="public/base" /}
+{block name="link"}
+{/block}
+{block name="body"}
+<div class="lbox">
+    <div class="whitebg gbook" id="SOHUCS">
+        <h2 class="leave_position"><i class="fa fa-map-marker"></i>
+            &nbsp;您现在的位置是：<a href="/">首页</a>
+            &nbsp;&gt;&nbsp;<a href="{:url('forum/index')}">发表文章</a>
+        </h2>
+        <div class="forum_notice whitebg">
+            <h4 class="forum_title">文章发表须知：</h4>
+            <p>1、分享类型的文章需要审核后才可以展示，通过后会发放相应的钻石。</p>
+            <p>2、讨论的文章需要你支付相应的钻石。</p>
+            <p>3、不允许发表政治敏感、色情、广告等文章。</p>
+        </div>
+    </div>
+        <div class="whitebg gbook">
+            <h2 class="forum_title">文章发布</h2>
+        <div class="layui-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">标题：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="title" id="title" autocomplete="off" placeholder="请输入文章标题" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">文章类型：</label>
+                <div class="layui-input-block">
+                    <select name="type" id="type">
+                        <option value="1">分享</option>
+                        <option value="2">讨论</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">文章内容：</label>
+                <div class="layui-input-block">
+                    <textarea id="editor_id" name="content" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item" style="text-align: center">
+                <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="submit">发表文章</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="__ADMIN__/plugins/kindeditor/kindeditor-all.js"></script>
+<script src="__ADMIN__/plugins/kindeditor/lang/zh-CN.js"></script>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        KindEditor.ready(function (K) {
+            window.editor = K.create('#editor_id', {
+                height: '400px',
+                width:'100%',
+                themeType: 'default',
+                allowPreviewEmoticons: false,
+                allowImageUpload: true,
+                allowFileManager: true,
+                uploadJson: "{:url('forum/uploadQiniu')}",
+                afterBlur: function(){ this.sync(); },
+                afterUpload: function (url) {
+                    this.sync();
+                },
+                items: [
+                    'undo', 'redo','|','justifyleft', 'justifycenter', 'justifyright',
+                    'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent','|',
+                    'formatblock', 'fontname', 'fontsize','forecolor', 'hilitecolor', 'bold',
+                    'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat','|','image', 'multiimage',
+                    'emoticons','link', 'unlink'
+                ]
+            });
+        });
+        //提交数据
+        form.on('submit(submit)', function (data) {
+            //验证表单
+            var user_id = '{$Think.session.user_id}';
+            if (!user_id) {
+                layer.msg('请先登录博客');
+                return false;
+            }
+            var field = {};
+            var content = window.editor.html();
+            if (!data.field.title) {
+                layer.msg('请输入文章标题');
+                return false;
+            }
+            if(!content){
+                layer.msg('文章内容不能为空');
+                return false;
+            }
+            field.title = data.field.title;
+            field.type = data.field.type;
+            field.content = content;
+            //ajax提交
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{:url('addForum')}",
+                data: field,
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {
+                            time: 2000
+                        }, function () {
+                            location.href = data.data.url;
+                        })
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        })
+    })
+</script>
+{/block}

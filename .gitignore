@@ -1,0 +1,5 @@
+.idea
+*.log
+*.vscode
+runtime
+public/uploads

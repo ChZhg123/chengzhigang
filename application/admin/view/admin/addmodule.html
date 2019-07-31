@@ -1,0 +1,130 @@
+{extend name="public/base" /}
+{block name="body"}
+<section class="content">
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">模块/菜单名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" id="name" autocomplete="off" placeholder="请输入模块/菜单名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">模块/菜单路径：</label>
+            <div class="layui-input-block">
+                <input type="text" name="href" id="href" autocomplete="off" placeholder="Controller/Active" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">模块/菜单排序：</label>
+            <div class="layui-input-block">
+                <input type="number" name="sort" id="sort" value="{$count}" autocomplete="off" placeholder="请输入模块/菜单序号" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择上级模块：</label>
+            <div class="layui-input-inline">
+                <select name="firstid" lay-filter="first">
+                    <option value="0">请选择</option>
+                    {foreach name="firstModule" item="val"}
+                    <option value="{$val.id}">{$val.name}</option>
+                    {/foreach}
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                <select name="secondid" id="second">
+                    <option value="0">请选择</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">模块/菜单图标：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="icon" id="icon" autocomplete="off" value="fa-circle-o" class="layui-input">
+            </div>
+            <div class="layui-input-inline">
+                <button class="layui-btn layui-normal" onclick="selectIcon()">选择</button>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="submit">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        //二级联动
+        form.on('select(first)', function (data) {
+            if (data.value) {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "{:url('getSecendModule')}?pid=" + data.value,
+                    success: function (data) {
+                        var html = "<option value='0' >请选择</option>";
+                        for (var i = 0; i < data.data.length; i++) {
+                            html += "<option value='" + data.data[i].id + "'>" + data.data[i].name + "</option>";
+                        }
+                        $('#second').html(html);
+                        form.render('select');
+                    },
+                    error: function (data) {
+                        layer.msg("服务器开小差啦");
+                    }
+                });
+            }
+        })
+        //选择图标
+        window.selectIcon = function () {
+            layer.open({
+                type: 2,
+                content: "{:url('iconlist')}",
+                title: '选择图标',
+                area: ['700px', '530px'],
+                shade: 0.8,
+            });
+        }
+        //选中回调
+        window.callback = function (icon) {
+            $('#icon').val(icon);
+        }
+        //提交数据
+        form.on('submit(submit)', function (data) {
+            //验证表单
+            if (!data.field.name) {
+                layer.tips('请输入模块/菜单名称', '#name', { tips: 3 });
+                return false;
+            }
+            if (!data.field.href) {
+                layer.tips('请输入模块/菜单路径', '#href', { tips: 3 });
+                return false;
+            }
+            //ajax提交
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{:url('addModule')}",
+                data: data.field,
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {
+                            time: 2000
+                        }, function () {
+                            location.href = data.data.url;
+                        })
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        })
+    })
+</script>
+{/block}

@@ -1,0 +1,212 @@
+{extend name="public/base" /}
+{block name="style"}
+<style>
+    .glyphicon {
+        padding: 1px 3px;
+        font-size: 15px;
+        font-family: none;
+        font-weight: normal;
+    }
+
+    .layui-form-item .layui-input-inline {
+        width: auto;
+    }
+</style>
+{/block}
+{block name="body"}
+<section class="content">
+    <form method="get" action="{:url('navlist');}">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" name="filter" value="{$filter}" id="filter" autocomplete="off" placeholder="请输入导航名称" class="layui-input">
+            </div>
+            <div class="layui-input-inline">
+                <button type="submit" class="layui-btn layui-btn-normal">查询</button>
+            </div>
+            {foreach name="Think.session.menulist" item="val"}
+            {if condition="strstr($val.url,($Request.controller.'/addNav'))"}
+            <div class="layui-input-inline" style="float:right;">
+                <a href="{:url('addNav')}" class="layui-btn layui-btn-normal">新增</a>
+            </div>
+            {/if}
+            {/foreach}
+        </div>
+    </form>
+    <table class="layui-table" lay-skin="line" id="list-table">
+        <colgroup>
+            <col width="400">
+            <col width="150">
+            <col width="100">
+            <col width="200">
+            <col>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>分类名称</th>
+                <th>缩略图</th>
+                <th>排序</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody class="viewer">
+            {volist name='list' id='data'}
+            <tr class="{$data.level}" id="{$data.level}_{$data.id}">
+                <td style="padding-left:15px">
+                    {if condition="$data.child"}
+                    <span class="glyphicon glyphicon-plus btn-warning" id="icon_{$data.level}_{$data.id}" aria-hidden="false" onclick="rowClicked(this)"></span>&nbsp; {/if}
+                    <span>{$data.name}</span>
+                </td>
+                <td><img src="{$data.image}" alt="" width="40" height="40"></td>
+                <td style="text-align:center;"><input type="number" value="{$data.sort}" lay-verify="number" min="0" onchange="ajaxUpdateField('{$data.id}','sort',this);" class="layui-input"></td>
+                <td>{$data.create_time}</td>
+                <td>
+                    {foreach name="Think.session.menulist" item="val"}
+                    {if condition="strstr($val.url,($Request.controller.'/editNav'))"}
+                    <a href="{:url('editNav',['id'=>$data['id']])}" class="layui-btn layui-btn-xs layui-btn-normal">编辑 </a>
+                    {/if}
+                    {if condition="strstr($val.url,($Request.controller.'/delNav'))"}
+                    <a href="javascript:delNav({$data.id})" class="layui-btn layui-btn-xs layui-btn-danger">删除 </a>
+                    {/if}
+                    {/foreach}
+                </td>
+            </tr>
+            {foreach name="data.child" item="second" }
+            <tr {if condition="$second.level eq 2" }style="display:none;" {/if} class="{$second.level}" id="{$second.level}_{$second.id}">
+                <td style="padding-left:<?php echo (($second['level']-1) * 5); ?>em">
+                    <span>{$second.name}</span>
+                </td>
+                <td><img src="{$second.image}" alt="" width="40" height="40"></td>
+                <td style="text-align:center;"><input type="number" value="{$second.sort}" lay-verify="number" min="0" onchange="ajaxUpdateField('{$second.id}','sort',this);" class="layui-input"></td>
+                <td>{$second.create_time}</td>
+                <td>
+                    {foreach name="Think.session.menulist" item="val"}
+                    {if condition="strstr($val.url,($Request.controller.'/editNav'))"}
+                    <a href="{:url('editNav',['id'=>$second['id']])}" class="layui-btn layui-btn-xs layui-btn-normal">编辑 </a>
+                    {/if}
+                    {if condition="strstr($val.url,($Request.controller.'/delNav'))"}
+                    <a href="javascript:delNav({$second.id})" class="layui-btn layui-btn-xs layui-btn-danger">删除 </a>
+                    {/if}
+                    {/foreach}
+                </td>
+            </tr>
+            {/foreach} {/volist}
+        </tbody>
+    </table>
+</section>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        //更改库存
+        window.ajaxUpdateField = function(id, field, obj) {
+            var value = obj.value;
+            if(value<0){
+                $(obj).val(0);
+            }
+            $.ajax({
+                url: "{:url('changeNavSort')}",
+                dataType: "json",
+                type:"POST",
+                data: {
+                    'id': id,
+                    'field': field,
+                    'value': value
+                },
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {
+                            time: 2000
+                        }, function () {
+                            location.href = data.data.url;
+                        })
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });  
+        }
+        //点击切换
+        window.rowClicked = function (obj) {
+            span = obj;
+            obj = obj.parentNode.parentNode;
+            var tbl = document.getElementById("list-table");
+            var lvl = parseInt(obj.className);
+            var fnd = false;
+            var sub_display = $(span).hasClass('glyphicon-minus') ? 'none' : '' ? 'block' : 'table-row';
+            if (sub_display == 'none') {
+                $(span).removeClass('glyphicon-minus btn-info');
+                $(span).addClass('glyphicon-plus btn-warning');
+            } else {
+                $(span).removeClass('glyphicon-plus btn-info');
+                $(span).addClass('glyphicon-minus btn-warning');
+            }
+            for (i = 0; i < tbl.rows.length; i++) {
+                var row = tbl.rows[i];
+                if (row == obj) {
+                    fnd = true;
+                } else {
+                    if (fnd == true) {
+                        var cur = parseInt(row.className);
+                        var icon = 'icon_' + row.id;
+                        if (cur > lvl) {
+                            row.style.display = sub_display;
+                            if (sub_display != 'none') {
+                                var iconimg = document.getElementById(icon);
+                                $(iconimg).removeClass('glyphicon-plus btn-info');
+                                $(iconimg).addClass('glyphicon-minus btn-warning');
+                            } else {
+                                $(iconimg).removeClass('glyphicon-minus btn-info');
+                                $(iconimg).addClass('glyphicon-plus btn-warning');
+                            }
+                        } else {
+                            fnd = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            for (i = 0; i < obj.cells[0].childNodes.length; i++) {
+                var imgObj = obj.cells[0].childNodes[i];
+                if (imgObj.tagName == "IMG") {
+                    if ($(imgObj).hasClass('glyphicon-plus btn-info')) {
+                        $(imgObj).removeClass('glyphicon-plus btn-info');
+                        $(imgObj).addClass('glyphicon-minus btn-warning');
+                    } else {
+                        $(imgObj).removeClass('glyphicon-minus btn-warning');
+                        $(imgObj).addClass('glyphicon-plus btn-info');
+                    }
+                }
+            }
+        }
+        //删除模块
+        window.delNav = function (id) {
+            layer.confirm('您确定要删除吗?', { icon: 3, title: '温馨提示', skin: getBodyColor() }, function (index) {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "{:url('delNav')}?id=" + id,
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg(data.msg, {
+                                time: 2000
+                            }, function () {
+                                location.href = data.data.url;
+                            })
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    },
+                    error: function (data) {
+                        layer.msg("服务器开小差啦");
+                    }
+                });
+                layer.closeAll();
+            });
+        }
+    })
+</script>
+{/block}

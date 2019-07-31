@@ -1,0 +1,78 @@
+{__NOLAYOUT__}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="观海听潮,博客,php,程志刚,程序员,IT,技术,网站">
+    <meta name="description" content="观海听潮个人博客网站,一个走在PHP道路上的程序员">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="__ADMIN__/plugins/layui/css/layui.css" />
+    <script src="__ADMIN__/plugins/layui/layui.js"></script>
+    <title>跳转提示</title>
+    <style type="text/css">
+        html{
+            height: 100vh;
+            overflow:hidden;
+        }
+        .layui-layer-dialog .layui-layer-content{
+            padding:10px!important;
+            font-size: 14px!important;
+            text-align: center;
+        }
+        .layui-layer-dialog .layui-layer-content h2{
+
+        }
+        .layui-layer-dialog .layui-layer-content span{
+            font-size: 12px;
+            color:#666;
+        }
+        @media screen and (min-width: 768px) {
+            body {
+                margin: 0;
+                background: url(/static/index/public/images/bg.jpg)no-repeat center center fixed;
+               background-size: cover;
+                width: 100%;
+                min-height: 100%;
+            }
+        }
+        @media only screen and (max-width: 768px){
+            body {
+                margin: 0;
+                padding:0;
+                background-image:url(/static/index/public/images/bgapp.jpg);
+             	 background-size:100% 100%;
+              background-repeat:no-repeat;
+                background-position:center;
+               height:100vh; 
+              overflow:hidden;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            var $ = layui.$;
+            var time = parseInt({$wait});
+            layer.alert('<h2>{$msg}</h2><span>等待时间：<time>{$wait}</time> s</span>', {
+                title: '温馨提示',
+                skin: 'layui-layer-lan', //样式类名
+                closeBtn: 0
+            }, function (index) {
+                location.href = "{$url}";
+                layer.close(index);
+            });
+            var interval = setInterval(function(){
+                time -= 1;
+                $('.layui-layer-content').find('time').html(time);
+                if(time <= 0) {
+                    location.href = "{$url}";
+                    clearInterval(interval);
+                };
+            }, 1000);
+        });
+    </script>
+    </script>
+</body>
+</html>

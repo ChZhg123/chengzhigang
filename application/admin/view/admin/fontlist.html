@@ -1,0 +1,146 @@
+{extend name="public/base" /}
+{block name="style"}
+<style>
+    .layui-form-item .layui-input-inline {
+        width: auto;
+    }
+
+    .viewer img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .layui-row {
+        margin-top: 20px;
+        margin-right: -10px;
+    }
+
+    .icon-info {
+        float: left;
+        margin-bottom: 20px;
+        width: 117px;
+        height: 100px;
+        padding-right: 10px;
+    }
+
+    .icon-box {
+        padding: 10px;
+        text-align: center;
+        width: 100%;
+        background: #ffffff;
+    }
+
+    .icon-box:hover {
+        cursor: pointer;
+    }
+
+    .icon-box p {
+        font-size: 35px;
+        height: 50px;
+        width: 100%;
+        line-height: 50px;
+    }
+
+    .icon-box h1 {
+        font-size: 13px;
+        height: 30px;
+        line-height: 30px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+{/block}
+{block name="body"}
+<section class="content">
+    <form method="get" action="{:url('fontlist');}">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" name="filter" value="{$filter}" id="filter" autocomplete="off" placeholder="请输入图标名称" class="layui-input">
+            </div>
+            <div class="layui-input-inline">
+                <button type="submit" class="layui-btn layui-btn-normal">查询</button>
+            </div>
+        </div>
+    </form>
+    <div class="layui-form">
+        <div class="layui-row">
+            {volist name='list' id='data'}
+            <div class="icon-info">
+                <div class="icon-box" onclick="editFont('{$data.id}','{$data.desc}')" title="{$data.name}">
+                    <p class="fa {$data.name}"></p>
+                    <h1>{$data.name}</h1>
+                </div>
+            </div>
+            {/volist}
+        </div>
+    </div>
+    {$list|raw}
+</section>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        window.editFont = function (id,desc) {
+            layer.prompt({
+                formType: 0,
+                value: desc,
+                title: '编辑图标',
+                area: ['800px', '350px'] //自定义文本域宽高
+            }, function (value, index, elem) {
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "{:url('editFont')}",
+                    data:{
+                        id:id,
+                        desc:value
+                    },
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg(data.msg, {
+                                time: 2000
+                            }, function () {
+                                location.href = data.data.url;
+                            })
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    },
+                    error: function (data) {
+                        layer.msg("服务器开小差啦");
+                    }
+                });
+                layer.close(index);
+            });
+        }
+        //删除模块
+        window.delUser = function (id) {
+            layer.confirm('您确定要删除吗?', { icon: 3, title: '温馨提示', skin: getBodyColor() }, function (index) {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "{:url('delUser')}?id=" + id,
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg(data.msg, {
+                                time: 2000
+                            }, function () {
+                                location.href = data.data.url;
+                            })
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    },
+                    error: function (data) {
+                        layer.msg("服务器开小差啦");
+                    }
+                });
+                layer.closeAll();
+            });
+        }
+    })
+</script>
+{/block}

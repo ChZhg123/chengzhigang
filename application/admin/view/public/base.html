@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>观海听潮 · 博客</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="__ADMIN__/plugins/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="__ADMIN__/plugins/font-awesome/css/font-awesome.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="__ADMIN__/custom/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="__ADMIN__/custom/css/_all-skins.min.css">
+    <!-- Daterange picker -->
+    <link rel="stylesheet" type="text/css" href="__ADMIN__/plugins/layui/css/layui.css" />
+    <!-- 图片放大 -->
+    <link rel="stylesheet" type="text/css" href="__ADMIN__/plugins/viewer/viewer.css" />
+    <!-- jQuery 3 -->
+    <script src="__ADMIN__/plugins/jquery/dist/jquery.min.js"></script>
+    <!-- jQuery UI 1.11.4 -->
+    <script src="__ADMIN__/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        // $.widget.bridge('uibutton', $.ui.button);
+    </script>
+    <!-- Bootstrap 3.3.7 -->
+    <script src="__ADMIN__/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Sparkline -->
+    <script src="__ADMIN__/plugins/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
+    <!-- jQuery Knob Chart -->
+    <script src="__ADMIN__/plugins/jquery-knob/dist/jquery.knob.min.js"></script>
+    <!-- daterangepicker -->
+    <script src="__ADMIN__/plugins/moment/min/moment.min.js"></script>
+    <!-- Slimscroll -->
+    <script src="__ADMIN__/plugins/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <!-- FastClick -->
+    <script src="__ADMIN__/plugins/fastclick/lib/fastclick.js"></script>
+    <!-- AdminLTE App -->
+    <script src="__ADMIN__/custom/js/adminlte.min.js"></script>
+    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+    <!-- AdminLTE for demo purposes -->
+    <script src="__ADMIN__/custom/js/demo.js"></script>
+    <script src="__ADMIN__/plugins/layui/layui.js"></script>
+    <script src="__ADMIN__/plugins/viewer/viewer.js"></script>
+    {block name="link"}{/block}
+</head>
+<style>
+    .content-header h1 {
+        background: #fff;
+        padding: 10px 10px;
+        border-radius: 2px;
+    }
+
+    form .layui-form-item {
+        padding: 10px;
+        background: #ffffff;
+        margin-bottom: 0px;
+    }
+
+    .layui-form-label {
+        width: 150px;
+    }
+
+    .layui-input-block {
+        margin-left: 150px;
+    }
+
+    .layui-input:focus,
+    .layui-textarea:focus {
+        border-color: #00BFFF !important
+    }
+
+    .layui-layer.layui-lyer-iframe {
+        border-radius: 5px;
+    }
+
+    .layui-layer.layui-layer-iframe .layui-layer-title {
+        height: 50px;
+        line-height: 50px;
+        background: #ffffff;
+        font-size: 16px;
+        border-radius: 5px 5px 0px 0px;
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    .layui-layer.layui-layer-iframe .layui-layer-setwin {
+        top: 17px;
+    }
+
+    .layui-layer.layui-layer-iframe .layui-layer-btn a {
+        height: 33px !important;
+        line-height: 33px !important;
+        padding: 0 18px !important;
+        border-radius: 4px !important;
+    }
+
+    /* 自定义样式 */
+    .layui-form .blog-btn-file {
+        float: left;
+        background: #ffffff;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        width: 70px;
+        height: 70px;
+        padding: 5px;
+        position: relative;
+        border-radius: 2px;
+    }
+
+    .layui-form .blog-btn-file input:hover {
+        cursor: pointer;
+    }
+
+    .layui-form .blog-btn-file input[type=file] {
+        opacity: 0;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0px;
+        left: 0px;
+    }
+
+    .layui-form .blog-btn-file .blog-btn-name {
+        text-align: center;
+        background: #ecf0f5;
+    }
+
+    .layui-form .blog-btn-file p {
+        height: 30px;
+        line-height: 45px;
+        font-size: 20px;
+    }
+
+    .layui-form .blog-btn-file h1 {
+        font-size: 12px;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .layui-form .blog-file-image {
+        float: left;
+        background: #ffffff;
+        width: 70px;
+        height: 70px;
+        padding: 5px;
+        margin-right: 10px;
+        border-radius: 2px;
+        position: relative;
+    }
+
+    .layui-form .blog-file-image img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .layui-form .blog-file-image p {
+        position: absolute;
+        bottom: 5px;
+        left: 5px;
+        width: 60px;
+        height: 14px;
+        line-height: 12px;
+        color: #ffffff;
+        background: #000000;
+        opacity: 0.7;
+        padding: 1px;
+        font-size: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .layui-form .blog-file-images{
+        float: left;
+        position: relative;
+        margin-bottom: 10px;
+    }
+    .layui-form .blog-file-images,
+	.layui-form .blog-file-images> :not(.dragging) {
+		-webkit-transition: all 0.4s ease-in-out;
+		-moz-transition: all 0.4s ease-in-out;
+		transition: all 0.4s ease-in-out;
+	}
+	
+	.layui-form .blog-file-images .dragging {
+		z-index: 800;
+	}
+    .layui-form .blog-file-images em {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        /* padding: 0px 5px; */
+        font-size: 18px;
+        text-align: center;
+        line-height: 16px;
+        width: 20px;
+        height: 20px;
+        background: #000;
+        opacity: 0.8;
+        color: #ffffff;
+        border-radius: 0px 0px 0px 30px;
+    }
+    .layui-form .blog-file-images em:hover{
+        cursor: pointer;
+    }
+    .layui-form .blog-file-image em {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        /* padding: 0px 5px; */
+        font-size: 18px;
+        text-align: center;
+        line-height: 16px;
+        width: 20px;
+        height: 20px;
+        background: #000;
+        opacity: 0.8;
+        color: #ffffff;
+        border-radius: 0px 0px 0px 30px;
+    }
+    .layui-form .blog-file-image em:hover{
+        cursor: pointer;
+    }
+    .layui-form .layui-btn-disabled{
+        pointer-events: none;
+    }
+</style>
+
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+        {block name="style"}{/block}
+        {include file="public/header"}
+        {include file="public/side"}
+        <div class="content-wrapper">
+            <section class="content-header">
+                {if condition="$Request.controller eq 'Index'"}
+                <h1>首页
+                    <small>控制面板</small></h1>
+                <ol class="breadcrumb">
+                    <li><a href="{:url('index')}"><i class="fa fa-dashboard"></i> 首页</a></li>
+                    <li class="active">首页</li>
+                </ol>
+                {/if}
+                {foreach name="Think.session.side_navs" item="val"}
+                {if condition="$val['url'] eq $Request.controller"}
+                <h1>{$val['name']}
+                    {foreach name="val.child" item="v"}
+                    {if condition="strstr($v['url'],$Request.action)"}
+                    <small>{$v.name}</small>
+                    {/if}
+                    {if condition="isset($v.child)"}
+                    {foreach name="v.child" item="vv"}
+                    {if condition="strstr(strtolower($vv['url']),$Request.action)&&(strstr($vv['url'],$Request.controller))"}
+                    <small>{$v.name}</small>
+                    <small>{$vv.name}</small>{/if}
+                    {/foreach}
+                    {/if}
+                    {/foreach}
+                </h1>
+                <ol class="breadcrumb">
+                    <li><i class="fa {$val['icon']}"></i> {$val['name']}</li>
+                    {foreach name="val.child" item="v"}
+                    {if condition="strstr($v['url'],$Request.action)"}
+                    <li class="active"><a href="{$v.href}">{$v.name}</a></li>
+                    {/if}
+                    {if condition="isset($v.child)"}
+                    {foreach name="v.child" item="vv"}
+                    {if condition="strstr(strtolower($vv['url']),$Request.action)&&(strstr($vv['url'],$Request.controller))"}
+                    <li class="active"><a href="{$v.href}">{$v.name}</a></li>
+                    <li class="active"><a href="{$vv.href}">{$vv.name}</a></li>{/if}
+                    {/foreach}
+                    {/if}
+                    {/foreach}
+                </ol>
+                {/if}
+                {/foreach}
+            </section>
+            {block name="body"}{/block}
+        </div>
+        {include file="public/footer"}</div>
+    <script>
+        // 自定义方法
+        $('.viewer').viewer();
+        //导航栏选中状态
+        $('.treeview-menu').find('li').each(function(){
+            if($(this).hasClass('active')){
+                $(this).parents('.treeview').addClass('active');
+            }
+        })
+        //获取body颜色
+        function getBodyColor() {
+            bodyColor = '';
+            var bodyclass = $('body').attr('class');
+            var bodyclassArr = bodyclass.split(' ');
+            for (var i = 0; i < bodyclassArr.length; i++) {
+                if (bodyclassArr[i].indexOf("skin") != -1) {
+                    bodyColor = bodyclassArr[i];
+                }
+            }
+            return bodyColor;
+        }
+        //判断登录超时
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            var admin_id = '{$Think.session.admin_id}';
+            if (!admin_id) {
+                //登录超时
+                layer.alert('登录超时，请重新登录', {
+                    title: '温馨提示',
+                    skin: getBodyColor(), //样式类名
+                    closeBtn: 0
+                }, function (index) {
+                    layer.close(index);
+                    location.href = "{:url('index/login')}";
+                });
+            }
+            //表单重置
+            $('button[type="reset"]').click(function () {
+                $(':input', '.layui-form')
+                    .not(':button,:submit,:reset,:hidden')
+                    .val('')
+                    .removeAttr('checked')
+                    .removeAttr('selected');
+            });
+            //上传图片回调
+            window.uploadBack = function (file) {
+                /*图片类型正则验证*/
+                if (!file) {
+                    layer.tips('请上传图片', '.blog-btn-file', { tips: 3 });
+                    return false;
+                }
+                var imgStr = /\.(jpg|jpeg|png|bmp|BMP|JPG|PNG|JPEG)$/;
+                if (!imgStr.test(file.name)) {
+                    layer.tips('请上传图片类型', '.blog-btn-file', { tips: 3 });
+                    return false;
+                }
+                var path = getObjectURL(file);
+                return path;
+            }
+            //获取图片url路径
+            window.getObjectURL = function (file) {
+                var url = null;
+                if (window.createObjectURL != undefined) {
+                    // basic
+                    url = window.createObjectURL(file);
+                } else if (window.URL != undefined) {
+                    // mozilla(firefox)
+                    url = window.URL.createObjectURL(file);
+                } else if (window.webkitURL != undefined) {
+                    // webkit or chrome
+                    url = window.webkitURL.createObjectURL(file);
+                }
+                return url;
+            }
+        });
+    </script>
+</body>
+
+</html>

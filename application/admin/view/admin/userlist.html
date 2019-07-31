@@ -1,0 +1,101 @@
+{extend name="public/base" /}
+{block name="style"}
+<style>
+
+    .layui-form-item .layui-input-inline {
+        width: auto;
+    }
+    .viewer img{
+        width:40px;
+        height:40px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+</style>
+{/block}
+{block name="body"}
+<section class="content">
+    <form method="get" action="{:url('userlist');}">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" name="filter" value="{$filter}" id="filter" autocomplete="off" placeholder="请输入管理员|角色名称" class="layui-input">
+            </div>
+            <div class="layui-input-inline">
+                <button type="submit" class="layui-btn layui-btn-normal">查询</button>
+            </div>
+            {foreach name="Think.session.menulist" item="val"}
+            {if condition="strstr($val.url,($Request.controller.'/addUser'))"}
+            <div class="layui-input-inline" style="float:right;">
+                <a href="{:url('addUser')}" class="layui-btn layui-btn-normal">新增</a>
+            </div>
+            {/if}
+            {/foreach}
+        </div>
+    </form>
+    <table class="layui-table" lay-skin="line" id="list-table">
+        <thead>
+            <tr>
+                <th>头像</th>
+                <th>账号</th>
+                <th>名称</th>
+                <th>所属角色</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody class="viewer">
+            {volist name='list' id='data'}
+            <tr>
+                <td><img src="{$data.head_pic}" alt="头像"></td>
+                <td>{$data.username}</td>
+                <td>{$data.name}</td>
+                <td>{$data.role_name}</td>
+                <td>{$data.create_time}</td>
+                <td>
+                    {foreach name="Think.session.menulist" item="val"}
+                    {if condition="strstr($val.url,($Request.controller.'/editUser'))"}
+                    <a href="{:url('editUser',['id'=>$data['id']])}" class="layui-btn layui-btn-xs layui-btn-normal">编辑 </a>
+                    {/if}
+                    {if condition="strstr($val.url,($Request.controller.'/delUser'))"}
+                    <a href="javascript:delUser({$data.id})" class="layui-btn layui-btn-xs layui-btn-danger">删除 </a>
+                    {/if}
+                    {/foreach}
+                </td>
+            </tr>
+        {/volist}
+        </tbody>
+    </table>
+    {$list|raw}
+</section>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        //删除模块
+        window.delUser = function (id) {
+            layer.confirm('您确定要删除吗?', { icon: 3, title: '温馨提示', skin: getBodyColor() }, function (index) {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "{:url('delUser')}?id=" + id,
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg(data.msg, {
+                                time: 2000
+                            }, function () {
+                                location.href = data.data.url;
+                            })
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    },
+                    error: function (data) {
+                        layer.msg("服务器开小差啦");
+                    }
+                });
+                layer.closeAll();
+            });
+        }
+    })
+</script>
+{/block}

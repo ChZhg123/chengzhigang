@@ -1,0 +1,246 @@
+{extend name="public/base" /}
+{block name="link"}
+<link rel="stylesheet" href="__INDEX__/public/css/forum.css">
+{/block}
+{block name="style"}
+<style>
+    .layui-form{
+        display:none;
+    }
+    .layui-card-header{
+        padding:0 15px;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="lbox">
+    <div class="header">
+        {if condition="$Think.session.user_info.head_pic"}
+        <img src="{$Think.session.user_info.head_pic}" alt="{$Think.session.nickname}">
+        {else/}
+        <img src="/static/admin/custom/image/head.jpg" alt="{$Think.session.nickname}">
+        {/if}
+        <h2>{$Think.session.nickname}&nbsp;&nbsp;{if condition="$Think.session.user_info.gender neq 3"}<i class="fa {if condition='$Think.session.user_info.gender eq 1'} fa-mars{else/}fa-mars-stroke{/if}"></i>{else/}<span style="font-size: 12px;">未知</span>{/if}</h2>
+        <p class="attr">
+            <a title="评论数" href="javascript:void(0)"><span><i class="fa fa-comment-o"  style="color:#5fcec0"> ({$comments})</i></span></a>
+            <a title="加入时间" href="javascript:void(0)"><span><i class="fa fa-clock-o" style="color:#06a5de"></i> {$Think.session.user_info.create_time}</span></a>
+            <a title="点赞数" href="javascript:void(0)"><span><i class="fa fa-thumbs-up" style="color:#f78585"> ({$likes})</i></span></a>
+        </p>
+        <div class="sign">
+            {if condition="$Think.session.user_info.sign"}
+            {$Think.session.user_info.sign}
+            {else/}
+            （这个人懒得留下签名）
+            {/if}
+        </div>
+        <div class="editUser">
+            <button class="layui-btn layui-btn-primary layui-btn-xs" onclick="editUser()"><i class="fa fa-edit"></i>编辑</button>
+        </div>
+    </div>
+    <div class="layui-form" id="edit"  style="padding:0px 10px;">
+        <div class="layui-form-item" style="text-align: center;padding: 10px 0px;">
+                {$Think.session.nickname}
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">上传头像：</label>
+            <div class="layui-input-block">
+                <div class="blog-file-image">
+                    {if condition="$Think.session.user_info.head_pic"}
+                    <img src="{$Think.session.user_info.head_pic}">
+                    {else/}
+                    <img src="/static/admin/custom/image/head.jpg">
+                    {/if}
+                </div>
+                <div class="blog-btn-file">
+                    <input type="file" accept="image/*" class="blog-image" name="image" />
+                    <div class="blog-btn-name">
+                        <p class="fa fa-folder-open-o"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择性别：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="gender" value="1" title="男" {if condition='$Think.session.user_info.gender eq 1'} checked=""{/if}>
+                <input type="radio" name="gender" value="2" title="女" {if condition='$Think.session.user_info.gender eq 2'} checked=""{/if}>
+                <input type="radio" name="gender" value="3" title="未知" {if condition='$Think.session.user_info.gender eq 3'} checked=""{/if}>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">个性签名：</label>
+            <div class="layui-input-block">
+                <input type="text" name="sign" value="{$Think.session.user_info.sign}" maxlength="255" autocomplete="off" placeholder="请填写个性签名" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item" style="text-align: center">
+            <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="confirm();">确认</button>
+            <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="cancel()">取消</button>
+        </div>
+    </div>
+    <div class="user-cont">
+        <h2>个人动态</h2>
+        <ul class="flow-default" id="acitve"></ul>
+    </div>
+    <div class="layui-row layui-col-space15" style="margin-top:10px;">
+        <div class="layui-col-md6">
+          <div class="layui-card">
+            <div class="layui-card-header">分享文章</div>
+            <ul class="layui-card-body">
+                {foreach name="share" item="val"}
+                <li>
+                    <a href="{:url('user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="avater" title="{$val.nickname}">
+                        <img  {if condition="$val.head_pic"} src="{$val.head_pic}"{else/} src="/static/admin/custom/image/head.jpg"{/if} alt="">
+                    </a>
+                    <h2>
+                        <a href="{:url('forum/forumInfo',['id'=>$val['id']])}" target="_blank">{$val.title}</a>
+                    </h2>
+                    <div class="list-info">
+                        <a href="{:url('user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="author"><i class="fa fa-tag"></i> {$val.nickname}</a>
+                        <span class="time">{$val.create_time}</span>
+                        <span class="list-nums"><a href="{:url('forum/forumInfo',['id'=>$val['id'],'focus'=>true])}" target="_blank"><i class="fa fa-commenting-o" title="评论"></i> {$val.comments}</a></span>
+                    </div>
+                    {if condition="$val.recomd eq 2"}
+                    <div class="list-badge">
+                        <span class="layui-badge layui-bg-red">推荐</span>
+                    </div>
+                    {/if}
+                </li>
+                {/foreach}
+                {if condition="count($share)==0"}
+                <div style="text-align: center;line-height: 75px;font-size: 13px;">暂时还没有发表分享型文章</div>
+                {/if}
+            </ul>
+          </div>
+        </div>
+        <div class="layui-col-md6">
+          <div class="layui-card">
+            <div class="layui-card-header">讨论文章</div>
+            <ul class="layui-card-body">
+                {foreach name="discuss" item="val"}
+                <li>
+                    <a href="{:url('user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="avater" title="{$val.nickname}">
+                        <img  {if condition="$val.head_pic"} src="{$val.head_pic}"{else/} src="/static/admin/custom/image/head.jpg"{/if} alt="">
+                    </a>
+                    <h2>
+                        <a href="{:url('forum/forumInfo',['id'=>$val['id']])}" target="_blank">{$val.title}</a>
+                    </h2>
+                    <div class="list-info">
+                        <a href="{:url('user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="author"><i class="fa fa-tag"></i> {$val.nickname}</a>
+                        <span class="time">{$val.create_time}</span>
+                        <span class="list-nums"><a href="{:url('forum/forumInfo',['id'=>$val['id'],'focus'=>true])}" target="_blank"><i class="fa fa-commenting-o" title="评论"></i> {$val.comments}</a></span>
+                    </div>
+                    {if condition="$val.recomd eq 2"}
+                    <div class="list-badge">
+                        <span class="layui-badge layui-bg-red">推荐</span>
+                    </div>
+                    {/if}
+                </li>
+                {/foreach}
+                {if condition="count($discuss)==0"}
+                <div style="text-align: center;line-height: 75px;font-size: 13px;">暂时还没有发表讨论型文章</div>
+                {/if}
+            </ul>
+          </div>
+        </div>
+      </div>
+</div>
+<script>
+    layui.use(['layer', 'form', 'laypage','flow'], function () {
+        var form = layui.form,
+            laypage = layui.laypage,
+            flow = layui.flow,
+            layer = layui.layer; //独立版的layer无需执行这一句
+        var image = "";
+        //获取用户动态信息
+        flow.load({
+            elem: '#acitve', //流加载容器
+            end:'没有更多动态啦',
+            done: function(page, next){ //执行下一页的回调
+                setTimeout(function(){
+                    $.ajax({
+                        type: "GET",
+                        dataType: "json",
+                        url: "{:url('user/getUserActive')}?page="+page,
+                        success: function (data) {
+                            var html = "";
+                            var resData = data.data.data;
+                            for(var i=0;i<resData.length;i++){
+                                html += '<li><div class="imgbox">';
+                                if('{$Think.session.user_info.head_pic}'){
+                                    html += '<img src="{$Think.session.user_info.head_pic}" alt="{$Think.session.nickname}">';
+                                }else{
+                                    html += '<img src="/static/admin/custom/image/head.jpg" alt="{$Think.session.nickname}">';
+                                }
+                                html += '</div><div class="contentbox"><p>'+resData[i].nickname+'</p><span>'+resData[i].create_time+'</span>';
+                                html += '<div class="text">'+resData[i].content+'</div></div></li>';
+                            }
+                            next(html, page < data.data.pages); 
+                        },
+                        error: function (data) {
+                            layer.msg("服务器开小差啦");
+                        }
+                    });
+                }, 500);
+            }
+        });
+        //单图片上传
+        $(".blog-image").change(function () {
+            var file = this.files[0];
+            var path = uploadBack(file);
+            $(this).parent().prev('.blog-file-image').show();
+            $(this).parent().prev('.blog-file-image').find('img').attr("src", path);
+            $(this).parent().prev('.blog-file-image').find('p').html(file.name);
+            $('.blog-file-image').viewer();
+            image = file;
+        })
+        //取消
+        window.cancel = function(){
+            layer.closeAll();
+        }
+        //确认
+        window.confirm = function(){
+            var formData = new FormData();
+            var gender = $('input[name="gender"]').val();
+            var sign = $('input[name="sign"]').val();
+            if(image){
+                formData.append("head_pic", image);
+            }
+            formData.append('gender',gender);
+            formData.append('sign',sign);
+            //ajax提交
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{:url('user/editUser')}",
+                data: formData,
+                processData:false,
+                contentType:false,
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {
+                            time: 2000
+                        }, function () {
+                            location.href = data.data.url;
+                        })
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("服务器开小差啦");
+                }
+            });
+        }
+        window.editUser = function(){
+            layer.open({
+                type: 1,
+                content: $('#edit'),
+                title: '编辑个人资料',
+                area: ['500px', '430px'],
+                shade: 0.8,
+            });
+        }
+    })
+</script>
+{/block}

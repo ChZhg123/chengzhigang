@@ -1,0 +1,235 @@
+{extend name="public/base" /}
+{block name="link"}
+<link rel="stylesheet" href="__INDEX__/public/css/forum.css">
+{/block}
+{block name="style"}
+<style>
+    .header {
+        background: #fff;
+        padding: 20px 0;
+        margin: 15px;
+        text-align: center;
+        border-radius: 2px;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        -ms-border-radius: 2px;
+        -o-border-radius: 2px;
+    }
+
+    .header img {
+        width: 80px;
+        height: 80px;
+        display: inline;
+        border-radius: 50%;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        -ms-border-radius: 50%;
+        -o-border-radius: 50%;
+    }
+
+    .header h2 {
+        padding: 5px 0;
+    }
+
+    .header h2 .fa-mars {
+        color: #4ebbf9;
+    }
+
+    .header h2 .fa-mars-stroke {
+        color: #f78585;
+    }
+
+    .header .sign {
+        font-size: 12px;
+        padding: 10px 0;
+        color: #aaa;
+    }
+
+    .user-cont {
+        background: #fff;
+        margin-top: 10px;
+        border-radius: 2px;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        -ms-border-radius: 2px;
+        -o-border-radius: 2px;
+        padding: 10px;
+    }
+
+    .user-cont h2 {
+        font-weight: 400;
+        font-size: 16px;
+        padding: 5px 0;
+        border-bottom: 1px solid #9c9c9c;
+    }
+
+    .user-cont li {
+        position: relative;
+        border-bottom: 1px solid #ccc;
+        padding: 5px 0;
+    }
+
+    .user-cont .imgbox {
+        position: absolute;
+        left: 0;
+    }
+
+    .user-cont .imgbox img {
+        border-radius: 4px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        -ms-border-radius: 4px;
+        -o-border-radius: 4px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .user-cont .contentbox {
+        display: inline-block;
+        padding-left: 45px;
+        width: 90%;
+    }
+
+    .user-cont .contentbox p {
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 22px;
+    }
+
+    .user-cont .contentbox span {
+        position: absolute;
+        right: 0;
+        top: 5px;
+        font-size: 12px;
+        color: #aaa;
+    }
+
+    .user-cont .contentbox .text {
+        font-size: 12px;
+    }
+
+    .user-cont .contentbox .text img {
+        display: inline;
+    }
+    .layui-col-md6{
+        padding:0px;
+    }
+    .layui-card{
+        padding:0px 10px;
+    }
+    .layui-card-body li{
+        height:auto;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="lbox">
+    <div class="header">
+        {if condition="$info.head_pic"}
+        <img src="{$info.head_pic}" alt="{$Think.session.nickname}">
+        {else/}
+        <img src="/static/admin/custom/image/head.jpg" alt="{$Think.session.nickname}">
+        {/if}
+        <h2>{$info.nickname}&nbsp;&nbsp;{if condition='$info.gender neq 3'}<i class="fa {if condition='$info.gender eq 1'} fa-mars{else/}fa-mars-stroke{/if}"></i>{else/}<span style="font-size: 12px;">未知</span>{/if}</h2>
+        <p class="attr">
+            <a title="加入时间" href="javascript:void(0)"><span><i class="fa fa-clock-o" style="color:#06a5de"></i> {$info.create_time}</span></a>
+        </p>
+        <div class="sign">
+            {if condition="$info.sign"}
+            {$info.sign}
+            {else/}
+            （这个人懒得留下签名）
+            {/if}
+        </div>
+    </div>
+    <div class="layui-row layui-col-space15" style="margin:15px;">
+        <div class="user-cont">
+            <h2>最新动态</h2>
+            <ul class="flow-default" id="acitve">
+                {foreach name="list" item="val"}
+                <li>
+                    <div class="imgbox">
+                        <img src="{$info.head_pic}" alt="{$val.nickname}">
+                    </div>
+                    <div class="contentbox">
+                        <p>{$val.nickname}</p><span>{$val.create_time}</span>
+                        <div class="text">{$val.content|raw}</div>
+                    </div>
+                </li>
+                {/foreach}
+            </ul>
+        </div>
+    </div>
+    <div class="layui-row layui-col-space15" style="margin:15px;margin-bottom: 0;padding-bottom: 20px;">
+        <div class="layui-col-md6">
+            <div class="layui-card" style="margin-right: 10px;">
+                <div class="layui-card-header">分享文章</div>
+                <ul class="layui-card-body">
+                    {foreach name="share" item="val"}
+                    <li>
+                        <a href="{:url('index/user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="avater" title="{$val.nickname}">
+                            <img {if condition="$val.head_pic" } src="{$val.head_pic}" {else/} src="/static/admin/custom/image/head.jpg" {/if} alt="">
+                        </a>
+                        <h2>
+                            <a href="{:url('index/forum/forumInfo',['id'=>$val['id']])}" target="_blank">{$val.title}</a>
+                        </h2>
+                        <div class="list-info">
+                            <a href="{:url('index/user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="author"><i class="fa fa-tag"></i> {$val.nickname}</a>
+                            <span class="time">{$val.create_time}</span>
+                            <span class="list-nums"><a href="{:url('index/forum/forumInfo',['id'=>$val['id'],'focus'=>true])}" target="_blank"><i class="fa fa-commenting-o" title="评论"></i> {$val.comments}</a></span>
+                        </div>
+                        {if condition="$val.recomd eq 2"}
+                        <div class="list-badge">
+                            <span class="layui-badge layui-bg-red">推荐</span>
+                        </div>
+                        {/if}
+                    </li>
+                    {/foreach}
+                    {if condition="count($share)==0"}
+                    <div style="text-align: center;line-height: 75px;font-size: 13px;">暂时还没有发表分享型文章</div>
+                    {/if}
+                </ul>
+            </div>
+        </div>
+        <div class="layui-col-md6">
+            <div class="layui-card" style="margin-left: 10px;">
+                <div class="layui-card-header">讨论文章</div>
+                <ul class="layui-card-body">
+                    {foreach name="discuss" item="val"}
+                    <li>
+                        <a href="{:url('index/user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="avater" title="{$val.nickname}">
+                            <img {if condition="$val.head_pic" } src="{$val.head_pic}" {else/} src="/static/admin/custom/image/head.jpg" {/if} alt="">
+                        </a>
+                        <h2>
+                            <a href="{:url('index/forum/forumInfo',['id'=>$val['id']])}" target="_blank">{$val.title}</a>
+                        </h2>
+                        <div class="list-info">
+                            <a href="{:url('index/user/userinfo',['user_id'=>$val['user_id']])}" target="_blank" class="author"><i class="fa fa-tag"></i> {$val.nickname}</a>
+                            <span class="time">{$val.create_time}</span>
+                            <span class="list-nums"><a href="{:url('index/forum/forumInfo',['id'=>$val['id'],'focus'=>true])}" target="_blank"><i class="fa fa-commenting-o" title="评论"></i> {$val.comments}</a></span>
+                        </div>
+                        {if condition="$val.recomd eq 2"}
+                        <div class="list-badge">
+                            <span class="layui-badge layui-bg-red">推荐</span>
+                        </div>
+                        {/if}
+                    </li>
+                    {/foreach}
+                    {if condition="count($discuss)==0"}
+                    <div style="text-align: center;line-height: 75px;font-size: 13px;">暂时还没有发表讨论型文章</div>
+                    {/if}
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['layer', 'form', 'laypage'], function () {
+        var form = layui.form,
+            laypage = layui.laypage,
+            layer = layui.layer; //独立版的layer无需执行这一句
+
+    })
+</script>
+{/block}
